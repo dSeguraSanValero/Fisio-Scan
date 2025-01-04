@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "FisioScan.Data/1.0.0": {
+        "dependencies": {
+          "FisioScan.Models": "1.0.0"
+        },
+        "runtime": {
+          "FisioScan.Data.dll": {}
+        }
+      },
+      "FisioScan.Models/1.0.0": {
+        "runtime": {
+          "FisioScan.Models.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FisioScan.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "FisioScan.Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
