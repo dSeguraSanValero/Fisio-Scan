@@ -19,5 +19,14 @@ namespace FisioScan.Models
         [Required]
         [StringLength(10, MinimumLength = 8, ErrorMessage = "El DNI debe tener entre 8 y 10 dígitos")]
         public string? Dni { get; set; }
+        
+        private DateTime birthDate;
+
+        [Required]
+        public DateTime BirthDate
+        {
+            get => birthDate.Date;
+            set => birthDate = value.Date;
+        }
     }
 }

@@ -24,27 +24,27 @@ public class PhysioRepository : IPhysioRepository
 
         if (!string.IsNullOrEmpty(email))
         {
-            query = query.Where(p => p.Email != null && p.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.Email == email);
         }
 
         if (!string.IsNullOrEmpty(name))
         {
-            query = query.Where(p => p.Name != null && p.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.Name == name);
         }
 
         if (!string.IsNullOrEmpty(firstSurname))
         {
-            query = query.Where(p => p.FirstSurname != null && p.FirstSurname.Contains(firstSurname, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.FirstSurname == firstSurname);
         }
 
         if (!string.IsNullOrEmpty(secondSurname))
         {
-            query = query.Where(p => p.SecondSurname != null && p.SecondSurname.Contains(secondSurname, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.SecondSurname == secondSurname);
         }
 
         if (!string.IsNullOrEmpty(role))
         {
-            query = query.Where(p => p.Role != null && p.Role.Equals(role, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.Role == role);
         }
 
         if (!string.IsNullOrEmpty(sortBy))

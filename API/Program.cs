@@ -27,6 +27,8 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IPhysioRepository, PhysioRepository>();
 builder.Services.AddScoped<IPhysioService, PhysioService>();
+builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
+builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 

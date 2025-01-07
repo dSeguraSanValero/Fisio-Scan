@@ -25,13 +25,13 @@ namespace FisioScan.API.Controllers
 
         [Authorize]
         [HttpGet(Name = "GetAllPatients")]
-        public ActionResult<IEnumerable<object>> SearchPatient(string? dni, int? createdBy, string? name, string? firstSurname, string? secondSurname)
+        public ActionResult<IEnumerable<Patient>> SearchPatient(string? dni, int? createdBy, string? name, string? firstSurname, string? secondSurname, DateTime birthDate)
         {
             if (_authService.HasAccessToResource(User, out int? physioId))
             {
                 if (physioId == null)
                 {
-                    var patients = _patientService.GetPatients(dni, null, name, firstSurname, secondSurname);
+                    var patients = _patientService.GetPatients(dni, createdBy, name, firstSurname, secondSurname, birthDate);
                     
                     if (patients == null || !patients.Any())
                     {
@@ -45,7 +45,8 @@ namespace FisioScan.API.Controllers
                         p.Name,
                         p.FirstSurname,
                         p.SecondSurname,
-                        p.Dni
+                        p.Dni,
+                        BirthDate = p.BirthDate.ToString("yyyy-MM-dd")
                     }).ToList();
 
                     return Ok(transformedPatients);
@@ -54,7 +55,7 @@ namespace FisioScan.API.Controllers
                 if (physioId.HasValue)
                 {
                     createdBy = physioId.Value;
-                    var patients = _patientService.GetPatients(dni, createdBy, name, firstSurname, secondSurname);
+                    var patients = _patientService.GetPatients(dni, createdBy, name, firstSurname, secondSurname, birthDate);
 
                     if (patients == null || !patients.Any())
                     {
@@ -68,7 +69,8 @@ namespace FisioScan.API.Controllers
                         p.Name,
                         p.FirstSurname,
                         p.SecondSurname,
-                        p.Dni
+                        p.Dni,
+                        BirthDate = p.BirthDate.ToString("yyyy-MM-dd")
                     }).ToList();
 
                     return Ok(transformedPatients);

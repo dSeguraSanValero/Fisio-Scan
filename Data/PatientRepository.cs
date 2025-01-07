@@ -15,13 +15,13 @@ public class PatientRepository : IPatientRepository
     }
 
 
-    public IEnumerable<Patient> GetAllPatients(string? dni, int? createdBy, string? name, string? firstSurname, string? secondSurname)
+    public IEnumerable<Patient> GetAllPatients(string? dni, int? createdBy, string? name, string? firstSurname, string? secondSurname, DateTime birthDate)
     {
         var query = _context.Patients.AsQueryable();
 
         if (!string.IsNullOrEmpty(dni))
         {
-            query = query.Where(p => p.Dni != null && p.Dni.Contains(dni, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.Dni == dni);
         }
 
         if (createdBy.HasValue)
@@ -31,17 +31,22 @@ public class PatientRepository : IPatientRepository
 
         if (!string.IsNullOrEmpty(name))
         {
-            query = query.Where(p => p.Name != null && p.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.Name == name);
         }
 
         if (!string.IsNullOrEmpty(firstSurname))
         {
-            query = query.Where(p => p.FirstSurname != null && p.FirstSurname.Contains(firstSurname, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.FirstSurname == firstSurname);
         }
 
         if (!string.IsNullOrEmpty(secondSurname))
         {
-            query = query.Where(p => p.SecondSurname != null && p.SecondSurname.Contains(secondSurname, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.SecondSurname == secondSurname);
+        }
+
+        if (birthDate != default(DateTime))
+        {
+            query = query.Where(p => p.BirthDate == birthDate);
         }
 
         return query.ToList();

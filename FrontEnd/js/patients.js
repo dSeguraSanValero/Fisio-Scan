@@ -1,6 +1,10 @@
 window.onload = function() {
     const token = sessionStorage.getItem("jwtToken");
     
+    if (!token) {
+        window.location.href = "index.html";
+        return;
+    }
 
     setTimeout(() => {
         document.querySelectorAll('.first-cards').forEach((section, index) => {
@@ -72,13 +76,14 @@ async function fetchPatients(token) {
 
                 // Contenido del div con los atributos del paciente
                 patientDiv.innerHTML = `
-                    <p><strong>Nombre:</strong> ${patient.name}</p>
-                    <p><strong>Primer Apellido:</strong> ${patient.firstSurname}</p>
-                    <p><strong>Segundo Apellido:</strong> ${patient.secondSurname}</p>
+                    <p><strong>Name:</strong> ${patient.name}</p>
+                    <p><strong>First Surname:</strong> ${patient.firstSurname}</p>
+                    <p><strong>Second Surname:</strong> ${patient.secondSurname}</p>
                     <p><strong>DNI:</strong> ${patient.dni}</p>
+                    <p><strong>Birth Date:</strong> ${patient.birthDate}</p>
                 `;
 
-                container.appendChild(patientDiv); // Agrega el div al contenedor
+                container.appendChild(patientDiv);
             });
         } else {
             console.error("No se recibieron pacientes o el formato de respuesta es incorrecto");

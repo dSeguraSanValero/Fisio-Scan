@@ -1,0 +1,80 @@
+using Microsoft.AspNetCore.Mvc;
+using FisioScan.Models;
+using FisioScan.Business;
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Logging;
+
+namespace FisioScan.API.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class TreatmentController : ControllerBase
+    {
+        private readonly ILogger<TreatmentController> _logger;
+        private readonly ITreatmentService _treatmentService;
+        private readonly IAuthService _authService;
+
+        public TreatmentController(ILogger<TreatmentController> logger, ITreatmentService treatmentService, IAuthService authService)
+        {
+            _logger = logger;
+            _treatmentService = treatmentService;
+            _authService = authService;
+        }
+
+        [Authorize]
+        [HttpGet(Name = "GetAllTreatments")]
+        public ActionResult<IEnumerable<Treatment>> SearchTreatment(int? treatmentId, int? patientId, int? createdBy, string? treatmentCause, DateTime treatmentDate)
+        {
+            if (_authService.HasAccessToResource(User, out int? physioId))
+            {
+                if (physioId == null)
+                {
+                    var treatments = _treatmentService.GetTreatments(treatmentId, patientId, createdBy, treatmentCause, treatmentDate);
+                    
+                    if (treatments == null || !treatments.Any())
+                    {
+                        return NotFound("No se encontraron tratamientos con los parámetros proporcionados.");
+                    }
+
+                    var transformedTreatments = treatments.Select(p => new
+                    {
+                        p.TreatmentId,
+                        p.PatientId,
+                        p.CreatedBy,
+                        p.TreatmentCause,
+                        TreatmentDate = p.TreatmentDate.ToString("yyyy-MM-dd")
+                    }).ToList();
+
+                    return Ok(transformedTreatments);
+                }
+
+                if (physioId.HasValue)
+                {
+                    createdBy = physioId.Value;
+                    var treatments = _treatmentService.GetTreatments(treatmentId, patientId, createdBy, treatmentCause, treatmentDate);
+
+                    if (treatments == null || !treatments.Any())
+                    {
+                        return NotFound("No se encontraron tratamientos con los parámetros proporcionados.");
+                    }
+
+                    var transformedTreatments = treatments.Select(p => new
+                    {
+                        p.TreatmentId,
+                        p.PatientId,
+                        p.CreatedBy,
+                        p.TreatmentCause,
+                        TreatmentDate = p.TreatmentDate.ToString("yyyy-MM-dd")
+                    }).ToList();
+
+                    return Ok(transformedTreatments);
+                }
+            }
+            
+            return Unauthorized("Acceso denegado");
+        }
+    }
+
+}

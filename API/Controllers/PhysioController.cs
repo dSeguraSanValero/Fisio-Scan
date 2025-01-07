@@ -27,7 +27,6 @@ public class PhysioController : ControllerBase
     [HttpGet(Name = "GetAllPhysios")]
     public ActionResult<IEnumerable<Physio>> SearchPhysio(int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role)
     {
-
         try
         {
             var physios = _physioService.GetPhysios(registrationNumber, email, name, firstSurname, secondSurname, sortBy, sortOrder, role);

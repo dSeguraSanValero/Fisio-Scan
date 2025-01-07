@@ -13,9 +13,9 @@ public class PatientService : IPatientService
     }
 
 
-    public IEnumerable<Patient> GetPatients(string? dni = null, int? createdBy = null, string? name = null, string? firstSurname = null, string? secondSurname = null)
+    public IEnumerable<Patient> GetPatients(string? dni, int? createdBy, string? name, string? firstSurname, string? secondSurname, DateTime birthDate)
     {
-        return _repository.GetAllPatients(dni, createdBy, name, firstSurname, secondSurname);
+        return _repository.GetAllPatients(dni, createdBy, name, firstSurname, secondSurname, birthDate);
     }
 
     public void RegisterPatient(string name, string firstSurname, string secondSurname, string dni)
