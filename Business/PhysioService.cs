@@ -7,28 +7,25 @@ namespace FisioScan.Business
     public class PhysioService : IPhysioService
     {
         private readonly IPhysioRepository _repository;
-        private readonly IConfiguration _configuration;
 
-        public PhysioService(IPhysioRepository repository, IConfiguration configuration)
+        public PhysioService(IPhysioRepository repository)
         {
-            _configuration = configuration;
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public IEnumerable<Physio> GetPhysios()
+        public IEnumerable<Physio> GetPhysios(int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role)
         {
-            return _repository.GetAllPhysios(null, null, null, null, null, null);
+            return _repository.GetAllPhysios(registrationNumber, email, name, firstSurname, secondSurname, sortBy, sortOrder, role);
         }
 
-
-        // Método actualizado de registro que utiliza las propiedades actuales de Physio, incluyendo Email
-        public void RegisterPhysio(string name, string lastName, string email, int registrationNumber, string password)
+        public void RegisterPhysio(string name, string firstSurname, string secondSurname, int registrationNumber, string email, string password)
         {
             var newPhysio = new Physio
             {
                 Name = name,
-                LastName = lastName,
-                Email = email, // Nueva propiedad Email
+                FirstSurname = firstSurname,
+                SecondSurname = secondSurname,
+                Email = email,
                 RegistrationNumber = registrationNumber,
                 Password = password
             };
@@ -36,16 +33,18 @@ namespace FisioScan.Business
             _repository.AddPhysio(newPhysio);
         }
 
-
-        public Physio? ValidatePhysio(string email, string password)
+        public void DeletePhysio(Physio physio)
         {
-            // Utilizar GetPhysios con el filtro de email
-            var physio = _repository.GetAllPhysios(null, null, null, null, null, email).FirstOrDefault();
-
-            // Comprobar si la contraseña coincide
-            return physio != null && physio.Password == password ? physio : null;
+            _repository.RemovePhysio(physio);
         }
 
+        public void UpdatePhysio(Physio physio, string password, string email)
+        {
+            physio.Password = password;
+            physio.Email = email;
+
+            _repository.UpdatePhysioDetails(physio);
+        }
     }
 }
 

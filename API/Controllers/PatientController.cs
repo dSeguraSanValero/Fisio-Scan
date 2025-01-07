@@ -1,43 +1,82 @@
 using Microsoft.AspNetCore.Mvc;
-using FisioScan.Business;
 using FisioScan.Models;
+using FisioScan.Business;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
-
-namespace FisioScan.API.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class PatientController : ControllerBase
+namespace FisioScan.API.Controllers
 {
-    private readonly ILogger<PatientController> _logger;
-
-    private readonly IPatientService _patientService;
-
-    public PatientController(ILogger<PatientController> logger, IPatientService patientService)
+    [ApiController]
+    [Route("[controller]")]
+    public class PatientController : ControllerBase
     {
-        _logger = logger;
-        _patientService = patientService;
-    }
+        private readonly ILogger<PatientController> _logger;
+        private readonly IPatientService _patientService;
+        private readonly IAuthService _authService;
 
-    [HttpGet(Name = "GetAllPatients")]
-    public ActionResult<IEnumerable<Patient>> SearchPatient(string? dni)
-    {
-        var patients = _patientService.GetPatients(dni);
-
-        if (!patients.Any())
+        public PatientController(ILogger<PatientController> logger, IPatientService patientService, IAuthService authService)
         {
-            return NotFound();
+            _logger = logger;
+            _patientService = patientService;
+            _authService = authService;
         }
 
-        var transformedPatients = patients.Select(
-            p => new
+        [Authorize]
+        [HttpGet(Name = "GetAllPatients")]
+        public ActionResult<IEnumerable<object>> SearchPatient(string? dni, int? createdBy, string? name, string? firstSurname, string? secondSurname)
+        {
+            if (_authService.HasAccessToResource(User, out int? physioId))
             {
-                p.PatientId,
-                p.Name
-            }
-        );
+                if (physioId == null)
+                {
+                    var patients = _patientService.GetPatients(dni, null, name, firstSurname, secondSurname);
+                    
+                    if (patients == null || !patients.Any())
+                    {
+                        return NotFound("No se encontraron pacientes con los parámetros proporcionados.");
+                    }
 
-        return Ok(transformedPatients);
+                    var transformedPatients = patients.Select(p => new
+                    {
+                        p.PatientId,
+                        p.CreatedBy,
+                        p.Name,
+                        p.FirstSurname,
+                        p.SecondSurname,
+                        p.Dni
+                    }).ToList();
+
+                    return Ok(transformedPatients);
+                }
+
+                if (physioId.HasValue)
+                {
+                    createdBy = physioId.Value;
+                    var patients = _patientService.GetPatients(dni, createdBy, name, firstSurname, secondSurname);
+
+                    if (patients == null || !patients.Any())
+                    {
+                        return NotFound("No se encontraron pacientes con los parámetros proporcionados.");
+                    }
+
+                    var transformedPatients = patients.Select(p => new
+                    {
+                        p.PatientId,
+                        p.CreatedBy,
+                        p.Name,
+                        p.FirstSurname,
+                        p.SecondSurname,
+                        p.Dni
+                    }).ToList();
+
+                    return Ok(transformedPatients);
+                }
+            }
+            
+            return Unauthorized("Acceso denegado");
+        }
     }
 }
+

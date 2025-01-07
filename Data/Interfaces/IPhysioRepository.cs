@@ -4,11 +4,13 @@ namespace FisioScan.Data
 {
     public interface IPhysioRepository
     {
-        IEnumerable<Physio> GetAllPhysios(
-            int? registrationNumber, string? email, string? name, 
-            string? lastName, string? sortBy, string? sortOrder);
+        public IEnumerable<Physio> GetAllPhysios(int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role);
         
         void AddPhysio(Physio physio);
+
+        public void UpdatePhysioDetails(Physio physio);
+
+        public void RemovePhysio(Physio physio);
     }
 }
 

@@ -1,0 +1,79 @@
+.background {
+    background-image: url("../images/home-background-green-blurr.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.my-header {
+    display: flex;
+    width: 100%;
+}
+
+.button-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 3vh;
+}
+
+.fixed {
+    position: absolute;
+}
+
+.card-style {
+    text-align: center;
+    width: 35vh !important;
+    margin: 15vh;
+    box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.card-style.active {
+    display: flex !important;
+}
+
+.first-cards {
+    background-color: rgb(27, 122, 205) !important;
+    display: none !important;
+}
+
+
+.first-cards:hover {
+    box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5); 
+}
+
+.add-cards {
+    display: none !important;
+    background-color: rgb(55, 155, 87) !important;
+}
+
+.add-cards:hover {
+    box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5) !important; 
+}
+
+.archive-cards {
+    display: none !important;
+    background-color: rgb(32, 89, 115) !important;
+}
+
+.archive-cards:hover {
+    box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5); 
+}
+
+.white-text {
+    color: rgb(255, 255, 255) ! important;
+}
+
+.logo {
+    width: 15vh;
+}
+
+.return-card {
+    background-color: rgb(146, 146, 146) !important;
+}
+
+.return-card:hover {
+    box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5); 
+}

@@ -14,7 +14,10 @@ namespace FisioScan.Data.Migrations
                 {
                     PatientId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstSurname = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecondSurname = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Dni = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -29,9 +32,11 @@ namespace FisioScan.Data.Migrations
                     PhysioId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstSurname = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecondSurname = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RegistrationNumber = table.Column<int>(type: "int", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Physio"),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -41,18 +46,21 @@ namespace FisioScan.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Patients",
-                columns: new[] { "PatientId", "Dni", "Name" },
-                values: new object[] { 1, "730151515", "John Doe" });
-
-            migrationBuilder.InsertData(
-                table: "Patients",
-                columns: new[] { "PatientId", "Dni", "Name" },
-                values: new object[] { 2, "730203040", "Pedro Martínez" });
+                columns: new[] { "PatientId", "CreatedBy", "Dni", "FirstSurname", "Name", "SecondSurname" },
+                values: new object[,]
+                {
+                    { 1, 1, "724264567", "González", "John", "Rodríguez" },
+                    { 2, 2, "723626246", "Sánchez", "Luis", "Martínez" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Physios",
-                columns: new[] { "PhysioId", "Email", "LastName", "Name", "Password", "RegistrationNumber" },
-                values: new object[] { 1, "pakito.perez@example.com", "Perez", "Pakito", "1234", 1783 });
+                columns: new[] { "PhysioId", "Email", "FirstSurname", "Name", "Password", "RegistrationNumber", "Role", "SecondSurname" },
+                values: new object[,]
+                {
+                    { 1, "admin@admin.com", "Perez", "Juan", "admin", 1568, "Admin", "Martínez" },
+                    { 2, "pakito.perez@example.com", "Calvo", "David", "1234", 1247, "Physio", "Alonso" }
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

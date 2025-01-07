@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using FisioScan.Models;
 using FisioScan.Business;
-using FisioSolution.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using FisioScan.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace FisioScan.API.Controllers
 {
@@ -13,52 +12,42 @@ namespace FisioScan.API.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IPhysioService _physioService;
-        private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IPhysioService physioService, IConfiguration configuration)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
-            _physioService = physioService;
-            _configuration = configuration;
+            _authService = authService;
+            _logger = logger;
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDTO loginDto)
+        [HttpPost("login-fisioterapeuta")]
+        public IActionResult LoginPhysio([FromBody] LoginPhysioDTO loginPhysioDTO)
         {
-            // Verificar que los datos de inicio de sesión no sean nulos
-            if (loginDto == null || string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
-                return BadRequest("Email y contraseña requeridos.");
-
-            // Validar usuario
-            var physio = _physioService.ValidatePhysio(loginDto.Email, loginDto.Password);
-            if (physio == null)
-                return Unauthorized("Credenciales incorrectas.");
-
-            // Generar el token JWT
-            var token = GenerateJwtToken(physio);
-            return Ok(new { token });
-        }
-
-        private string GenerateJwtToken(Physio physio)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
+            if (!ModelState.IsValid)
             {
-                new Claim(JwtRegisteredClaimNames.Sub, physio.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+                return BadRequest(ModelState);
+            }
 
-            var token = new JwtSecurityToken(
-                _configuration["Jwt:Issuer"],
-                _configuration["Jwt:Audience"],
-                claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds
-            );
+            try
+            {
+                var credentials = _authService.LoginPhysio(loginPhysioDTO.Email, loginPhysioDTO.Password);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                var token = _authService.GeneratePhysioToken(credentials);
+
+                return Ok(new { token });
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogWarning($"No se ha encontrado el fisioterapeuta con el email {loginPhysioDTO.Email}");
+                return NotFound("No se ha encontrado el fisioterapeuta");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error durante el login: {ex.Message}");
+                return BadRequest("Error durante el login.");
+            }
         }
     }
 }
+

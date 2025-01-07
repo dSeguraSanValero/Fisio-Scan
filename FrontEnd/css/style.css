@@ -3,6 +3,16 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    background-attachment: fixed;
+    transition: background-image 1s ease-out;
+}
+
+.background-image.green-background {
+    background-image: url("../images/home-background-green.png");
+}
+
+.background-image.pink-background {
+    background-image: url("../images/home-background-pink.jpg");
 }
 
 .blur {

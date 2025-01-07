@@ -14,22 +14,54 @@ namespace FisioScan.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Actualizamos el objeto Physio con la propiedad Email y LastName.
+            modelBuilder.Entity<Physio>()
+                .Property(p => p.Role)
+                .HasDefaultValue("Physio");
+
             modelBuilder.Entity<Physio>().HasData(
                 new Physio 
                 { 
                     PhysioId = 1, 
-                    Name = "Pakito", 
-                    LastName = "Perez", 
-                    Email = "pakito.perez@example.com", // Nueva propiedad Email
-                    RegistrationNumber = 1783, 
-                    Password = "1234" 
+                    Name = "Juan",
+                    FirstSurname = "Perez",
+                    SecondSurname = "Martínez",
+                    Email = "admin@admin.com",
+                    RegistrationNumber = 1568,
+                    Password = "admin",
+                    Role = "Admin"
+                },
+                new Physio 
+                { 
+                    PhysioId = 2, 
+                    Name = "David", 
+                    FirstSurname = "Calvo",
+                    SecondSurname = "Alonso",
+                    Email = "pakito.perez@example.com",
+                    RegistrationNumber = 1247, 
+                    Password = "1234",
+                    Role = "Physio"
                 }
             );
 
             modelBuilder.Entity<Patient>().HasData(
-                new Patient { PatientId = 1, Name = "John Doe", Dni = "730151515" },
-                new Patient { PatientId = 2, Name = "Pedro Martínez", Dni = "730203040" }
+                new Patient 
+                { 
+                    PatientId = 1,
+                    CreatedBy = 1, 
+                    Name = "John",
+                    FirstSurname = "González",
+                    SecondSurname = "Rodríguez",
+                    Dni = "724264567" 
+                },
+                new Patient 
+                { 
+                    PatientId = 2,
+                    CreatedBy = 2, 
+                    Name = "Luis",
+                    FirstSurname = "Sánchez",
+                    SecondSurname = "Martínez",
+                    Dni = "723626246" 
+                }
             );
         }
 
@@ -40,8 +72,8 @@ namespace FisioScan.Data
                 .EnableSensitiveDataLogging();
         }
 
-        public DbSet<Patient>? Patients { get; set; }
-        public DbSet<Physio>? Physios { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<Physio> Physios { get; set; }
     }
 }
 

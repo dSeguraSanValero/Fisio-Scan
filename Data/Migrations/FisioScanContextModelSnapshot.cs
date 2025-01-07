@@ -29,10 +29,19 @@ namespace FisioScan.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PatientId"), 1L, 1);
 
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
                     b.Property<string>("Dni")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FirstSurname")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecondSurname")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PatientId");
@@ -43,14 +52,20 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             PatientId = 1,
-                            Dni = "730151515",
-                            Name = "John Doe"
+                            CreatedBy = 1,
+                            Dni = "724264567",
+                            FirstSurname = "González",
+                            Name = "John",
+                            SecondSurname = "Rodríguez"
                         },
                         new
                         {
                             PatientId = 2,
-                            Dni = "730203040",
-                            Name = "Pedro Martínez"
+                            CreatedBy = 2,
+                            Dni = "723626246",
+                            FirstSurname = "Sánchez",
+                            Name = "Luis",
+                            SecondSurname = "Martínez"
                         });
                 });
 
@@ -66,7 +81,7 @@ namespace FisioScan.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("FirstSurname")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -78,6 +93,15 @@ namespace FisioScan.Data.Migrations
                     b.Property<int>("RegistrationNumber")
                         .HasColumnType("int");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Physio");
+
+                    b.Property<string>("SecondSurname")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("PhysioId");
 
                     b.ToTable("Physios");
@@ -86,11 +110,24 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             PhysioId = 1,
+                            Email = "admin@admin.com",
+                            FirstSurname = "Perez",
+                            Name = "Juan",
+                            Password = "admin",
+                            RegistrationNumber = 1568,
+                            Role = "Admin",
+                            SecondSurname = "Martínez"
+                        },
+                        new
+                        {
+                            PhysioId = 2,
                             Email = "pakito.perez@example.com",
-                            LastName = "Perez",
-                            Name = "Pakito",
+                            FirstSurname = "Calvo",
+                            Name = "David",
                             Password = "1234",
-                            RegistrationNumber = 1783
+                            RegistrationNumber = 1247,
+                            Role = "Physio",
+                            SecondSurname = "Alonso"
                         });
                 });
 #pragma warning restore 612, 618

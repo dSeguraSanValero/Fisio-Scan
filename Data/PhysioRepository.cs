@@ -13,7 +13,7 @@ public class PhysioRepository : IPhysioRepository
     } 
 
     
-    public IEnumerable<Physio> GetAllPhysios(int? registrationNumber, string? email, string? name, string? lastName, string? sortBy, string? sortOrder)
+    public IEnumerable<Physio> GetAllPhysios(int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role)
     {
         var query = _context.Physios.AsQueryable();
 
@@ -22,19 +22,29 @@ public class PhysioRepository : IPhysioRepository
             query = query.Where(p => p.RegistrationNumber == registrationNumber.Value);
         }
 
+        if (!string.IsNullOrEmpty(email))
+        {
+            query = query.Where(p => p.Email != null && p.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+        }
+
         if (!string.IsNullOrEmpty(name))
         {
             query = query.Where(p => p.Name != null && p.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        if (!string.IsNullOrEmpty(lastName))
+        if (!string.IsNullOrEmpty(firstSurname))
         {
-            query = query.Where(p => p.LastName != null && p.LastName.Contains(lastName, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.FirstSurname != null && p.FirstSurname.Contains(firstSurname, StringComparison.OrdinalIgnoreCase));
         }
 
-        if (!string.IsNullOrEmpty(email))
+        if (!string.IsNullOrEmpty(secondSurname))
         {
-            query = query.Where(p => p.Email != null && p.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(p => p.SecondSurname != null && p.SecondSurname.Contains(secondSurname, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrEmpty(role))
+        {
+            query = query.Where(p => p.Role != null && p.Role.Equals(role, StringComparison.OrdinalIgnoreCase));
         }
 
         if (!string.IsNullOrEmpty(sortBy))
@@ -47,11 +57,17 @@ public class PhysioRepository : IPhysioRepository
                         : query.OrderBy(p => p.Name);
                     break;
 
-                case "lastname":
+                case "firstSurname":
                     query = sortOrder != null && sortOrder.ToLower() == "desc"
-                        ? query.OrderByDescending(p => p.LastName)
-                        : query.OrderBy(p => p.LastName);
+                        ? query.OrderByDescending(p => p.FirstSurname)
+                        : query.OrderBy(p => p.FirstSurname);
                     break;
+
+                case "secondSurname":
+                    query = sortOrder != null && sortOrder.ToLower() == "desc"
+                        ? query.OrderByDescending(p => p.SecondSurname)
+                        : query.OrderBy(p => p.SecondSurname);
+                    break;    
 
                 case "email":
                     query = sortOrder != null && sortOrder.ToLower() == "desc"
@@ -75,6 +91,19 @@ public class PhysioRepository : IPhysioRepository
     public void AddPhysio(Physio physio)
     {
         _context.Physios.Add(physio);
+        _context.SaveChanges();
+    }
+
+    public void UpdatePhysioDetails(Physio physio)
+    {
+        _context.Physios.Update(physio);
+        _context.SaveChanges();
+    }
+
+
+    public void RemovePhysio(Physio physio)
+    {
+        _context.Physios.Remove(physio);
         _context.SaveChanges();
     }
 }

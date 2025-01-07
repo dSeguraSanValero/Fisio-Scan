@@ -6,6 +6,20 @@ using FisioScan.Business;
 using FisioScan.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opt =>
+    {
+        opt.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = false,
+            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+            ValidAudience = builder.Configuration["JWT:ValidAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+        };
+    });
 
 // Add services to the container.
 
@@ -13,6 +27,8 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IPhysioRepository, PhysioRepository>();
 builder.Services.AddScoped<IPhysioService, PhysioService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("ServerDB_dockernet");
 

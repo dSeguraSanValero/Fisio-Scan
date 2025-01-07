@@ -4,9 +4,11 @@ namespace FisioScan.Business;
 
 public interface IPhysioService
 {
-    IEnumerable<Physio> GetPhysios();
+    public IEnumerable<Physio> GetPhysios(int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role);
 
-    void RegisterPhysio(string name, string lastName, string email, int registrationNumber, string password);
+    public void RegisterPhysio(string name, string firstSurname, string secondSurname, int registrationNumber, string email, string password);
     
-    Physio? ValidatePhysio(string email, string password);
+    public void DeletePhysio(Physio physio);
+
+    public void UpdatePhysio(Physio physio, string password, string email);
 }

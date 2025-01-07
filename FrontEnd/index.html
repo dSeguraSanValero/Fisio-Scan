@@ -38,8 +38,8 @@
 
               <nav>
                   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Sign In</button>
-                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Sign Up</button>
+                    <button onclick="greenBackground()" class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Sign In</button>
+                    <button onclick="pinkBackground()" class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Sign Up</button>
                   </div>
               </nav>
               <div class="tab-content" id="nav-tabContent">
@@ -48,22 +48,22 @@
                     <form>
           
                       <div data-mdb-input-init class="form-outline mb-4 margin-top">
-                        <input type="text" class="form-control" id="validationUsername" aria-describedby="inputGroupPrepend" required>
-                        <label class="form-label" for="form3Example3">Email address</label>
+                        <input type="text" class="form-control" id="loginEmail" required>
+                        <label class="form-label" for="loginEmail">Email address</label>
                         <div class="invalid-feedback">
-                          Please choose a username.
+                          Please introduce your email.
                         </div>
                       </div>
         
                       <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="text" class="form-control" id="validationPassword" aria-describedby="inputGroupPrepend" required>
-                        <label class="form-label" for="form3Example3">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" required>
+                        <label class="form-label" for="loginPassword">Password</label>
                         <div class="invalid-feedback">
-                          Please choose a password.
+                          Please introduce your password.
                         </div>
                       </div>
 
-                      <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4">
+                      <button type="submit" data-mdb-button-init data-mdb-ripple-init onclick="loginPhysio()" class="btn btn-primary btn-block mb-4">
                         Sign In
                       </button>
 
@@ -75,17 +75,23 @@
                   <form id="registerPhysioForm">
                       <div class="row">
                           <div class="col-md-6 mb-4">
-                              <div data-mdb-input-init class="form-outline margin-top">
-                                  <input type="text" id="physioName" name="name" class="form-control" required />
+                              <div data-mdb-input-init class="form-outline">
+                                  <input type="text" id="physioName" name="name" class="form-control margin-top" required />
                                   <label class="form-label" for="physioName">First name</label>
                               </div>
                           </div>
                           <div class="col-md-6 mb-4">
-                              <div data-mdb-input-init class="form-outline margin-top">
-                                  <input type="text" id="physioLastName" name="lastName" class="form-control" required />
-                                  <label class="form-label" for="physioLastName">Last name</label>
+                              <div data-mdb-input-init class="form-outline">
+                                  <input type="text" id="physioFirstSurname" name="lastName" class="form-control margin-top" required />
+                                  <label class="form-label" for="physioLastName">First Surname</label>
                               </div>
                           </div>
+                          <div class="col-md-6 mb-4">
+                            <div data-mdb-input-init class="form-outline">
+                                <input type="text" id="physioSecondSurname" name="lastName" class="form-control" required />
+                                <label class="form-label" for="physioLastName">Second Surname</label>
+                            </div>
+                        </div>
                       </div>
               
                       <div data-mdb-input-init class="form-outline mb-4">
@@ -118,51 +124,5 @@
   <script src="./js/script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-
-  <script>
-    async function registerPhysio() {
-        // Capturamos los valores de los campos del formulario
-        const name = document.getElementById('physioName').value;
-        const lastName = document.getElementById('physioLastName').value;
-        const email = document.getElementById('email').value;
-        const registrationNumber = parseInt(document.getElementById('registrationNumber').value);
-        const password = document.getElementById('password').value;
-
-        // Construimos el objeto con los datos
-        const physioData = {
-            name: name,
-            lastName: lastName,
-            email: email,
-            registrationNumber: registrationNumber,
-            password: password
-        };
-
-        try {
-            // Realizamos la solicitud POST al servidor
-            const response = await fetch('http://localhost:7238/Physio/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(physioData)
-            });
-
-            if (response.ok) {
-                // Si el registro es exitoso
-                alert('Registro exitoso');
-                document.getElementById('registerPhysioForm').reset();
-            } else {
-                // Si hay un error en la respuesta
-                const errorData = await response.json();
-                alert(`Error en el registro: ${errorData.message || response.statusText}`);
-            }
-        } catch (error) {
-            // En caso de error de red u otro problema
-            console.error('Error al enviar los datos:', error);
-            alert('Error al registrar el fisioterapeuta. Por favor, intenta de nuevo.');
-        }
-    }
-  </script>
-
 </body>
 </html>
