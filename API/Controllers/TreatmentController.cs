@@ -27,9 +27,9 @@ namespace FisioScan.API.Controllers
         [HttpGet(Name = "GetAllTreatments")]
         public ActionResult<IEnumerable<Treatment>> SearchTreatment(int? treatmentId, int? patientId, int? createdBy, string? treatmentCause, DateTime treatmentDate)
         {
-            if (_authService.HasAccessToResource(User, out int? physioId))
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
             {
-                if (physioId == null)
+                if (rolePhysioId == null)
                 {
                     var treatments = _treatmentService.GetTreatments(treatmentId, patientId, createdBy, treatmentCause, treatmentDate);
                     
@@ -50,9 +50,9 @@ namespace FisioScan.API.Controllers
                     return Ok(transformedTreatments);
                 }
 
-                if (physioId.HasValue)
+                if (rolePhysioId.HasValue)
                 {
-                    createdBy = physioId.Value;
+                    createdBy = rolePhysioId.Value;
                     var treatments = _treatmentService.GetTreatments(treatmentId, patientId, createdBy, treatmentCause, treatmentDate);
 
                     if (treatments == null || !treatments.Any())

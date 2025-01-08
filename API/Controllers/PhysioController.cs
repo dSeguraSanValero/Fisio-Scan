@@ -24,25 +24,45 @@ public class PhysioController : ControllerBase
         _authService = authService;
     }
 
+    [Authorize]
     [HttpGet(Name = "GetAllPhysios")]
-    public ActionResult<IEnumerable<Physio>> SearchPhysio(int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role)
+    public ActionResult<IEnumerable<Physio>> SearchPhysio(int? physioId, int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role)
     {
-        try
+        if (_authService.HasAccessToResource(User, out int? rolePhysioId))
         {
-            var physios = _physioService.GetPhysios(registrationNumber, email, name, firstSurname, secondSurname, sortBy, sortOrder, role);
-            
-            if (physios == null || !physios.Any())
+            if (rolePhysioId == null)
             {
-                return NotFound("No se encontraron fisioterapeutas con los parámetros proporcionados.");
-            }
+                try
+                {
+                    var physios = _physioService.GetPhysios(physioId, registrationNumber, email, name, firstSurname, secondSurname, sortBy, sortOrder, role);
+                    
+                    if (physios == null || !physios.Any())
+                    {
+                        return NotFound("No se encontraron fisioterapeutas con los parámetros proporcionados.");
+                    }
 
-            return Ok(physios);
+                    return Ok(physios);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error al obtener los fisioterapeutas: {ex.Message}");
+                    return StatusCode(500, "Error interno del servidor.");
+                }
+            }
+            if (rolePhysioId.HasValue)
+            {
+                physioId = rolePhysioId.Value;
+                var physio = _physioService.GetPhysios(physioId, null, null, null, null, null, null, null, null);
+                
+                if (physio == null || !physio.Any())
+                {
+                    return NotFound("No se encontraron fisioterapeutas con los parámetros proporcionados.");
+                }
+
+                return Ok(physio);
+            }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error al obtener los fisioterapeutas: {ex.Message}");
-            return StatusCode(500, "Error interno del servidor.");
-        }
+        return Unauthorized("Acceso denegado");
     }
 
     [HttpPost]
@@ -79,7 +99,7 @@ public class PhysioController : ControllerBase
     {
         try
         {
-            var physios = _physioService.GetPhysios(null, null, null, null, null, null, null, null);
+            var physios = _physioService.GetPhysios(null, null, null, null, null, null, null, null, null);
             var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
 
             if (physio == null)

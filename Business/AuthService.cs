@@ -30,7 +30,7 @@ public class AuthService : IAuthService
             throw new ArgumentException("Email and password are obligatory.");
         }
 
-        foreach (var physio in _physioRepository.GetAllPhysios(null, null, null, null, null, null, null, null))
+        foreach (var physio in _physioRepository.GetAllPhysios(null, null, null, null, null, null, null, null, null))
         {
             if (physio.Email == email && physio.Password == password)
             {
@@ -63,12 +63,12 @@ public class AuthService : IAuthService
         return tokenHandler.WriteToken(token);
     }
 
-    public bool HasAccessToResource(ClaimsPrincipal user, out int? physioId)
+    public bool HasAccessToResource(ClaimsPrincipal user, out int? rolePhysioId)
     {
-        physioId = null;
+        rolePhysioId = null;
 
         var roleClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-        var physioIdClaim = user.Claims.FirstOrDefault(c => c.Type == "PhysioId"); // Cambiado de NameIdentifier a PhysioId
+        var physioIdClaim = user.Claims.FirstOrDefault(c => c.Type == "PhysioId");
 
         if (roleClaim == null)
         {
@@ -84,7 +84,7 @@ public class AuthService : IAuthService
         {
             if (int.TryParse(physioIdClaim.Value, out int parsedPhysioId))
             {
-                physioId = parsedPhysioId;
+                rolePhysioId = parsedPhysioId;
                 return true; 
             }
             else

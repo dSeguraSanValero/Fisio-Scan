@@ -13,9 +13,9 @@ namespace FisioScan.Business
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public IEnumerable<Physio> GetPhysios(int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role)
+        public IEnumerable<Physio> GetPhysios(int? physioId, int? registrationNumber, string? email, string? name, string? firstSurname, string? secondSurname, string? sortBy, string? sortOrder, string? role)
         {
-            return _repository.GetAllPhysios(registrationNumber, email, name, firstSurname, secondSurname, sortBy, sortOrder, role);
+            return _repository.GetAllPhysios(physioId, registrationNumber, email, name, firstSurname, secondSurname, sortBy, sortOrder, role);
         }
 
         public void RegisterPhysio(string name, string firstSurname, string secondSurname, int registrationNumber, string email, string password)

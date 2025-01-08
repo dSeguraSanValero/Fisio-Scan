@@ -23,6 +23,7 @@ window.onload = function() {
         });
     }, 300);
     
+    getPhysioName(token);
     fetchPatients(token);
 };
 
@@ -45,6 +46,55 @@ function showSection(sectionClass) {
         section.classList.add('active');
     });
 }
+
+async function getPhysioName(token) {
+    try {
+        const response = await fetch("http://localhost:7238/Physio", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            console.error("Error al obtener los datos del fisioterapeuta. Código de estado: " + response.status);
+            return;
+        }
+
+        const data = await response.json();
+        console.log("Datos del fisioterapeuta:", data);
+
+        const container = document.getElementById('physioName-container');
+
+        if (!container) {
+            console.error("No se encontró un elemento con el ID 'physioName-container' en el DOM.");
+            return;
+        }
+
+        // Verificar que hay al menos un fisioterapeuta en los datos
+        if (data && data.length > 0) {
+            const physio = data[0]; // Obtener el primer fisioterapeuta
+
+            const physioDiv = document.createElement('div');
+            physioDiv.className = 'patient-card';
+
+            // Mostrar solo el nombre del primer fisioterapeuta
+            physioDiv.innerHTML = `
+                <p><strong>¡Bienvenido ${physio.name}!</strong></p>
+            `;
+
+            container.appendChild(physioDiv);
+        } else {
+            console.error("No se encontraron fisioterapeutas en los datos.");
+        }
+    } catch (error) {
+        console.error("Ocurrió un error al intentar obtener el nombre del fisioterapeuta:", error);
+    }
+}
+
+
+
 
 async function fetchPatients(token) {
     try {
