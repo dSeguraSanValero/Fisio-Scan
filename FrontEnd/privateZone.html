@@ -16,11 +16,11 @@
     </div>
   </header>
 
-  <div id="physioName-container"></div>
+  <div class="welcome-message" id="physioName-container"></div>
   
   <div class="main-card-container">
     <div class="d-flex justify-content-center align-items-center fixed">
-      <div class="d-flex my-gap">
+      <div class="d-flex my-gap column">
           <div class="card align-items-center card-style first-cards" style="width: 18rem;" onclick="showSection('add-cards')">
               <img class="logo" src="./images/plus.png" alt="Card image cap">
               <div class="card-body">
@@ -38,7 +38,7 @@
     </div>
 
     <div class="d-flex justify-content-center align-items-center fixed">
-      <div class="d-flex my-gap">
+      <div class="d-flex my-gap column">
           <div class="card align-items-center card-style add-cards" style="width: 18rem;" onclick="cardClicked()">
             <img class="logo" src="./images/add-patient.png" alt="Card image cap">
             <div class="card-body">
@@ -65,8 +65,8 @@
     </div>
 
     <div class="d-flex justify-content-center align-items-center fixed">
-      <div class="d-flex my-gap">
-          <div class="card align-items-center card-style archive-cards" style="width: 18rem;" onclick="cardClicked()">
+      <div class="d-flex my-gap column">
+          <div class="card align-items-center card-style archive-cards" style="width: 18rem;" onclick="showSection('patients-cards')">
             <img class="logo" src="./images/search-patient.png" alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title white-text">Search Patient</h5>
@@ -89,8 +89,31 @@
       </div>
     </div>
 
-    <h1>Lista de Pacientes</h1>
-    <div id="patients-container"></div>
+    <div class="card align-items-center card-style patients-cards">
+      <h1>Lista de Pacientes</h1>
+
+
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="Name" aria-label=".form-control-sm example">
+        </div>
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="First Surname" aria-label=".form-control-sm example">
+        </div>
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="Second Surname" aria-label=".form-control-sm example">
+        </div>
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="number" placeholder="NIF" aria-label=".form-control-sm example">
+        </div>
+      </div>
+
+      <button onclick="fetchPatients()">Search</button>
+
+
+
+      <div id="patients-container"></div>
+    </div>
 
   </div>
 

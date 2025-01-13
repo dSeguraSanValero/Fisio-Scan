@@ -72,14 +72,11 @@ async function getPhysioName(token) {
             return;
         }
 
-        // Verificar que hay al menos un fisioterapeuta en los datos
         if (data && data.length > 0) {
-            const physio = data[0]; // Obtener el primer fisioterapeuta
+            const physio = data[0];
 
             const physioDiv = document.createElement('div');
-            physioDiv.className = 'patient-card';
 
-            // Mostrar solo el nombre del primer fisioterapeuta
             physioDiv.innerHTML = `
                 <p><strong>¡Bienvenido ${physio.name}!</strong></p>
             `;
@@ -94,11 +91,45 @@ async function getPhysioName(token) {
 }
 
 
-
-
-async function fetchPatients(token) {
+async function fetchPatients() {
     try {
-        const response = await fetch("http://localhost:7238/Patient", {
+
+        const token = sessionStorage.getItem("jwtToken");
+        
+        if (!token) {
+            console.error("Token no encontrado. Redirigiendo a la página de login.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        const nameInput = document.querySelector('input[placeholder="Name"]');
+        const firstSurnameInput = document.querySelector('input[placeholder="First Surname"]');
+        const secondSurnameInput = document.querySelector('input[placeholder="Second Surname"]');
+        const nifInput = document.querySelector('input[placeholder="NIF"]');
+
+        const name = nameInput.value.trim();
+        const firstSurname = firstSurnameInput.value.trim();
+        const secondSurname = secondSurnameInput.value.trim();
+        const nif = nifInput.value.trim();
+
+        let url = "http://localhost:7238/Patient";
+        if (name) {
+            url += `?name=${encodeURIComponent(name)}`;
+        }
+
+        if (firstSurname) {
+            url += `?firstSurname=${encodeURIComponent(firstSurname)}`;
+        }
+
+        if (secondSurname) {
+            url += `?secondSurname=${encodeURIComponent(secondSurname)}`;
+        }
+
+        if (nif) {
+            url += `?dni=${encodeURIComponent(nif)}`;
+        }
+
+        const response = await fetch(url, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -116,22 +147,31 @@ async function fetchPatients(token) {
         if (data && Array.isArray(data)) {
             console.log("Pacientes recibidos:", data);
 
-            // Mostrar los pacientes en el HTML
-            const container = document.getElementById('patients-container'); // Contenedor principal en HTML
-            container.innerHTML = ''; // Limpia el contenedor antes de agregar nuevos elementos
+            const container = document.getElementById('patients-container');
+            container.innerHTML = '';
 
             data.forEach(patient => {
                 const patientDiv = document.createElement('div');
-                patientDiv.className = 'patient-card'; // Clase opcional para estilos
+                patientDiv.className = 'patient-data';
 
-                // Contenido del div con los atributos del paciente
                 patientDiv.innerHTML = `
                     <p><strong>Name:</strong> ${patient.name}</p>
                     <p><strong>First Surname:</strong> ${patient.firstSurname}</p>
                     <p><strong>Second Surname:</strong> ${patient.secondSurname}</p>
-                    <p><strong>DNI:</strong> ${patient.dni}</p>
-                    <p><strong>Birth Date:</strong> ${patient.birthDate}</p>
+                    <div class="patient-details" style="display: none;">
+                        <p><strong>DNI:</strong> ${patient.dni}</p>
+                        <p><strong>Birth Date:</strong> ${patient.birthDate}</p>
+                    </div>
+                    <button class="toggle-details">View Details</button>
                 `;
+
+                const button = patientDiv.querySelector('.toggle-details');
+                const details = patientDiv.querySelector('.patient-details');
+                button.addEventListener('click', () => {
+                    const isVisible = details.style.display === 'block';
+                    details.style.display = isVisible ? 'none' : 'block';
+                    button.textContent = isVisible ? 'View Details' : 'Hide Details';
+                });
 
                 container.appendChild(patientDiv);
             });
@@ -142,6 +182,8 @@ async function fetchPatients(token) {
         console.error("Error al obtener los pacientes:", error);
     }
 }
+
+
 
 
 function logOff() {

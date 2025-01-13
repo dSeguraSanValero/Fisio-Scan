@@ -11,6 +11,13 @@
     width: 100%;
 }
 
+.welcome-message {
+    margin: 3vh;
+    font-size: 5vh;
+    font-weight: bold;
+    text-align: center;
+}
+
 .button-container {
     position: absolute;
     top: 0;
@@ -20,6 +27,16 @@
 
 .fixed {
     position: absolute;
+}
+
+.column {
+    flex-wrap: wrap !important;
+}
+
+.main-card-container {
+    justify-content: center;
+    width: 100%;
+    display: flex;
 }
 
 .card-style {
@@ -38,7 +55,6 @@
     background-color: rgb(27, 122, 205) !important;
     display: none !important;
 }
-
 
 .first-cards:hover {
     box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5); 
@@ -62,6 +78,20 @@
     box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5); 
 }
 
+.patients-cards {
+    display: none !important;
+    background-color: rgb(212, 211, 197) !important;
+    min-width: 80% !important;
+    margin: 0 !important;
+}
+
+.patient-data {
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    padding: 2vh;
+    margin: 2vh;
+}
+
 .white-text {
     color: rgb(255, 255, 255) ! important;
 }
@@ -77,3 +107,4 @@
 .return-card:hover {
     box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5); 
 }
+
