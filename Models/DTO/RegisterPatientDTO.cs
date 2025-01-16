@@ -10,15 +10,15 @@ namespace FisioScan.Models
 
         [Required]
         [StringLength(50, ErrorMessage = "El apellido debe tener menos de 50 caracteres")]
-        public string LastName { get; set; } = string.Empty;
+        public string FirstSurname { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50, ErrorMessage = "El apellido debe tener menos de 50 caracteres")]
-        public string SecondName { get; set; } = string.Empty;
+        public string SecondSurname { get; set; } = string.Empty;
 
         [Required]
         [StringLength(10, MinimumLength = 8, ErrorMessage = "El DNI debe tener entre 8 y 10 dígitos")]
-        public string? Dni { get; set; }
+        public string Dni { get; set; }
         
         private DateTime birthDate;
 

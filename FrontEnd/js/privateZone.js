@@ -184,8 +184,6 @@ async function fetchPatients() {
 }
 
 
-
-
 function logOff() {
 
     sessionStorage.clear();

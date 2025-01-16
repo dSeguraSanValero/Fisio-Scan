@@ -79,6 +79,59 @@ namespace FisioScan.API.Controllers
             
             return Unauthorized("Acceso denegado");
         }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult RegisterPatient([FromBody] RegisterPatientDTO patientDTO)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    try
+                    {
+                        _patientService.RegisterPatient(
+                            name: patientDTO.Name,
+                            dni: patientDTO.Dni,
+                            firstSurname: patientDTO.FirstSurname,
+                            secondSurname: patientDTO.SecondSurname,
+                            createdBy: 1,
+                            birthDate: patientDTO.BirthDate
+                        );
+
+                        return CreatedAtAction(nameof(SearchPatient), new { dni = patientDTO.Dni }, patientDTO);
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    try
+                    {
+                        _patientService.RegisterPatient(
+                            name: patientDTO.Name,
+                            dni: patientDTO.Dni,
+                            firstSurname: patientDTO.FirstSurname,
+                            secondSurname: patientDTO.SecondSurname,
+                            createdBy: rolePhysioId.Value,
+                            birthDate: patientDTO.BirthDate
+                        );
+
+                        return CreatedAtAction(nameof(SearchPatient), new { dni = patientDTO.Dni }, patientDTO);
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+                
+            }
+
+        return Unauthorized("Acceso denegado");
+        }
     }
 }
 
