@@ -85,6 +85,23 @@
     margin: 0 !important;
 }
 
+.patient-form {
+    display: none !important;
+    background-color: rgb(218, 225, 255) !important;
+    min-width: 35% !important;
+    margin: 0 !important;
+    padding: 5vh !important;
+}
+
+.my-row {
+    display: block;
+    align-items: center;
+}
+
+.form-margin {
+    margin: 4vh;
+}
+
 .patient-data {
     background-color: rgb(255, 255, 255);
     border-radius: 5px;
