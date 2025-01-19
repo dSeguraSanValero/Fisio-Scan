@@ -26,6 +26,7 @@ window.onload = function() {
     getPhysioName(token);
 };
 
+
 function showSection(sectionClass) {
     document.querySelectorAll('.card').forEach(section => {
 
@@ -45,6 +46,7 @@ function showSection(sectionClass) {
         section.classList.add('active');
     });
 }
+
 
 async function getPhysioName(token) {
     try {
@@ -90,9 +92,8 @@ async function getPhysioName(token) {
 }
 
 
-async function fetchPatients() {
+async function fetchPatients(text) {
     try {
-
         const token = sessionStorage.getItem("jwtToken");
         
         if (!token) {
@@ -101,31 +102,53 @@ async function fetchPatients() {
             return;
         }
 
-        const nameInput = document.querySelector('input[placeholder="Name"]');
-        const firstSurnameInput = document.querySelector('input[placeholder="First Surname"]');
-        const secondSurnameInput = document.querySelector('input[placeholder="Second Surname"]');
-        const nifInput = document.querySelector('input[placeholder="NIF"]');
 
-        const name = nameInput.value.trim();
-        const firstSurname = firstSurnameInput.value.trim();
-        const secondSurname = secondSurnameInput.value.trim();
-        const nif = nifInput.value.trim();
+        const nameInputs = document.querySelectorAll('input[placeholder="Name"]');
+        const firstSurnameInputs = document.querySelectorAll('input[placeholder="First Surname"]');
+        const secondSurnameInputs = document.querySelectorAll('input[placeholder="Second Surname"]');
+        const nifInputs = document.querySelectorAll('input[placeholder="NIF"]');
+
+        function getInputValues(inputs) {
+            return Array.from(inputs)
+                .map(input => input.value.trim())
+                .filter(value => value !== '');
+        }
+
+        const names = getInputValues(nameInputs);
+        const firstSurnames = getInputValues(firstSurnameInputs);
+        const secondSurnames = getInputValues(secondSurnameInputs);
+        const nifs = getInputValues(nifInputs);
 
         let url = "http://localhost:7238/Patient";
-        if (name) {
-            url += `?name=${encodeURIComponent(name)}`;
+
+        let params = [];
+
+        if (names.length > 0) {
+            names.forEach(name => {
+                params.push(`name=${encodeURIComponent(name)}`);
+            });
         }
 
-        if (firstSurname) {
-            url += `?firstSurname=${encodeURIComponent(firstSurname)}`;
+        if (firstSurnames.length > 0) {
+            firstSurnames.forEach(firstSurname => {
+                params.push(`firstSurname=${encodeURIComponent(firstSurname)}`);
+            });
         }
 
-        if (secondSurname) {
-            url += `?secondSurname=${encodeURIComponent(secondSurname)}`;
+        if (secondSurnames.length > 0) {
+            secondSurnames.forEach(secondSurname => {
+                params.push(`secondSurname=${encodeURIComponent(secondSurname)}`);
+            });
         }
 
-        if (nif) {
-            url += `?dni=${encodeURIComponent(nif)}`;
+        if (nifs.length > 0) {
+            nifs.forEach(nif => {
+                params.push(`dni=${encodeURIComponent(nif)}`);
+            });
+        }
+
+        if (params.length > 0) {
+            url += `?${params.join('&')}`;
         }
 
         const response = await fetch(url, {
@@ -135,6 +158,7 @@ async function fetchPatients() {
                 "Content-Type": "application/json"
             }
         });
+
 
         if (!response.ok) {
             console.error("Error al obtener los pacientes. Código de estado: " + response.status);
@@ -147,34 +171,46 @@ async function fetchPatients() {
         if (data && Array.isArray(data)) {
             console.log("Pacientes recibidos:", data);
 
-            const container = document.getElementById('patients-container');
-            container.innerHTML = '';
+            const containers = document.querySelectorAll('#patients-container');
 
-            data.forEach(patient => {
-                const patientDiv = document.createElement('div');
-                patientDiv.className = 'patient-data';
-
-                patientDiv.innerHTML = `
-                    <p><strong>Name:</strong> ${patient.name}</p>
-                    <p><strong>First Surname:</strong> ${patient.firstSurname}</p>
-                    <p><strong>Second Surname:</strong> ${patient.secondSurname}</p>
-                    <div class="patient-details" style="display: none;">
-                        <p><strong>DNI:</strong> ${patient.dni}</p>
-                        <p><strong>Birth Date:</strong> ${patient.birthDate}</p>
-                    </div>
-                    <button class="toggle-details">View Details</button>
-                `;
-
-                const button = patientDiv.querySelector('.toggle-details');
-                const details = patientDiv.querySelector('.patient-details');
-                button.addEventListener('click', () => {
-                    const isVisible = details.style.display === 'block';
-                    details.style.display = isVisible ? 'none' : 'block';
-                    button.textContent = isVisible ? 'View Details' : 'Hide Details';
+            containers.forEach(container => {
+                container.innerHTML = '';
+            
+                data.forEach(patient => {
+                    const patientDiv = document.createElement('div');
+                    patientDiv.className = 'patient-data';
+            
+                    patientDiv.innerHTML = `
+                        <p><strong>Name:</strong> ${patient.name}</p>
+                        <p><strong>First Surname:</strong> ${patient.firstSurname}</p>
+                        <p><strong>Second Surname:</strong> ${patient.secondSurname}</p>
+                        <div class="patient-details" style="display: none;">
+                            <p><strong>DNI:</strong> ${patient.dni}</p>
+                            <p><strong>Birth Date:</strong> ${patient.birthDate}</p>
+                        </div>
+                        <button class="toggle-details">View Details</button>
+                    `;
+            
+                    const button = patientDiv.querySelector('.toggle-details');
+                    const details = patientDiv.querySelector('.patient-details');
+            
+                    if (text === 'show') {
+                        button.addEventListener('click', () => {
+                            const isVisible = details.style.display === 'block';
+                            details.style.display = isVisible ? 'none' : 'block';
+                            button.textContent = isVisible ? 'View Details' : 'Hide Details';
+                        });
+                    }
+            
+                    if (text === 'addAssesment') {
+                        button.addEventListener('click', () => {
+                            // Agregar funcionalidad aquí
+                        });
+                    }
+            
+                    container.appendChild(patientDiv);
                 });
-
-                container.appendChild(patientDiv);
-            });
+            });            
         } else {
             console.error("No se recibieron pacientes o el formato de respuesta es incorrecto");
         }
@@ -182,6 +218,7 @@ async function fetchPatients() {
         console.error("Error al obtener los pacientes:", error);
     }
 }
+
 
 async function sendForm() {
 
@@ -193,14 +230,12 @@ async function sendForm() {
         return;
     }
     
-    // Obtener los valores de los inputs
     const name = document.querySelector('input[placeholder="Form Name"]').value;
     const firstSurname = document.querySelector('input[placeholder="Form First Surname"]').value;
     const secondSurname = document.querySelector('input[placeholder="Form Second Surname"]').value;
     const nif = document.querySelector('input[placeholder="Form NIF"]').value;
     const birthDate = document.querySelector('input[placeholder="Form Birth Date"]').value;
 
-    // Crear el objeto con los datos del formulario
     const patientData = {
         name: name,
         firstSurname: firstSurname,

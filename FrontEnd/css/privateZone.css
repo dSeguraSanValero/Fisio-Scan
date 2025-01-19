@@ -93,6 +93,13 @@
     padding: 5vh !important;
 }
 
+.add-assesment {
+    display: none !important;
+    background-color: rgb(161, 210, 171) !important;
+    min-width: 80% !important;
+    margin: 0 !important;
+}
+
 .my-row {
     display: block;
     align-items: center;
