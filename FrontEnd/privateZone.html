@@ -66,7 +66,7 @@
 
     <div class="d-flex justify-content-center align-items-center fixed">
       <div class="d-flex my-gap column">
-          <div class="card align-items-center card-style archive-cards" style="width: 18rem;" onclick="showSection('patients-cards')">
+          <div class="card align-items-center card-style archive-cards" style="width: 18rem;" onclick="fetchPatients(), showSection('patients-cards')">
             <img class="logo" src="./images/search-patient.png" alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title white-text">Search Patient</h5>
@@ -121,19 +121,19 @@
 
       <div class="my-row">
         <div class="col-auto form-margin">
-          <input class="form-control form-control-sm" type="text" placeholder="Name" aria-label=".form-control-sm example">
+          <input class="form-control form-control-sm" type="text" placeholder="Form Name" aria-label=".form-control-sm example">
         </div>
         <div class="col-auto form-margin">
-          <input class="form-control form-control-sm" type="text" placeholder="First Surname" aria-label=".form-control-sm example">
+          <input class="form-control form-control-sm" type="text" placeholder="Form First Surname" aria-label=".form-control-sm example">
         </div>
         <div class="col-auto form-margin">
-          <input class="form-control form-control-sm" type="text" placeholder="Second Surname" aria-label=".form-control-sm example">
+          <input class="form-control form-control-sm" type="text" placeholder="Form Second Surname" aria-label=".form-control-sm example">
         </div>
         <div class="col-auto form-margin">
-          <input class="form-control form-control-sm" type="number" placeholder="NIF" aria-label=".form-control-sm example">
+          <input class="form-control form-control-sm" type="number" placeholder="Form NIF" aria-label=".form-control-sm example">
         </div>
         <div class="col-auto form-margin">
-          <input class="form-control form-control-sm" type="text" placeholder="Birth Date" aria-label=".form-control-sm example">
+          <input class="form-control form-control-sm" type="text" placeholder="Form Birth Date" aria-label=".form-control-sm example">
         </div>
       </div>
 

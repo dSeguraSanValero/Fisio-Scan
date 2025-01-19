@@ -24,7 +24,6 @@ window.onload = function() {
     }, 300);
     
     getPhysioName(token);
-    fetchPatients(token);
 };
 
 function showSection(sectionClass) {
@@ -139,8 +138,9 @@ async function fetchPatients() {
 
         if (!response.ok) {
             console.error("Error al obtener los pacientes. Código de estado: " + response.status);
+            alert("No se encontraron pacientes con esos datos. Intenta de nuevo.");
             return;
-        }
+        }        
 
         const data = await response.json();
 
@@ -181,6 +181,51 @@ async function fetchPatients() {
     } catch (error) {
         console.error("Error al obtener los pacientes:", error);
     }
+}
+
+async function sendForm() {
+
+    const token = sessionStorage.getItem("jwtToken");
+        
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+    
+    // Obtener los valores de los inputs
+    const name = document.querySelector('input[placeholder="Form Name"]').value;
+    const firstSurname = document.querySelector('input[placeholder="Form First Surname"]').value;
+    const secondSurname = document.querySelector('input[placeholder="Form Second Surname"]').value;
+    const nif = document.querySelector('input[placeholder="Form NIF"]').value;
+    const birthDate = document.querySelector('input[placeholder="Form Birth Date"]').value;
+
+    // Crear el objeto con los datos del formulario
+    const patientData = {
+        name: name,
+        firstSurname: firstSurname,
+        secondSurname: secondSurname,
+        dni: nif,
+        birthDate: new Date(birthDate).toISOString(),
+    };
+
+    fetch('http://localhost:7238/Patient', {
+        method: 'POST',
+        headers: {
+        "Authorization": `Bearer ${token}`,
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(patientData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Respuesta del servidor:', data);
+        alert("Paciente creado correctamente.");
+    })
+    .catch(error => {
+        console.error('Error al enviar los datos:', error);
+        alert("ERROR al crear el paciente!!");
+    });
 }
 
 
