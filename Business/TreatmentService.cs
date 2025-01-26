@@ -17,15 +17,14 @@ public class TreatmentService : ITreatmentService
         return _repository.GetAllTreatments(treatmentId, patientId, createdBy, treatmentCause, treatmentDate);
     }
 
-    public void RegisterTreatment(int patientId, int createdBy, int treatmentId, string treatmentCause, DateTime treatmentDate)
+    public void RegisterTreatment(int patientId, int createdBy, string treatmentCause, DateTime treatmentDate)
     {
         var newTreatment = new Treatment
         {
-            CreatedBy = createdBy,
             PatientId = patientId,
-            TreatmentId = treatmentId,
-            TreatmentDate = treatmentDate,
-            TreatmentCause = treatmentCause
+            CreatedBy = createdBy,
+            TreatmentCause = treatmentCause,
+            TreatmentDate = treatmentDate
         };
 
         _repository.AddTreatment(newTreatment);

@@ -75,6 +75,53 @@ namespace FisioScan.API.Controllers
             
             return Unauthorized("Acceso denegado");
         }
+
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult RegisterTreatment([FromBody] RegisterTreatmentDTO treatmentDTO)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    try
+                    {
+                        _treatmentService.RegisterTreatment(
+                            patientId: treatmentDTO.PatientId,
+                            createdBy: 1,
+                            treatmentCause: treatmentDTO.TreatmentCause,
+                            treatmentDate: treatmentDTO.TreatmentDate
+                        );
+
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    try
+                    {
+                        _treatmentService.RegisterTreatment(
+                            patientId: treatmentDTO.PatientId,
+                            createdBy: rolePhysioId.Value,
+                            treatmentCause: treatmentDTO.TreatmentCause,
+                            treatmentDate: treatmentDTO.TreatmentDate
+                        );
+
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }  
+            }
+
+        return Unauthorized("Acceso denegado");
+        }
     }
 
 }

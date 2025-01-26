@@ -1,0 +1,7 @@
+.background {
+    background-image: url("../images/treatment-background-blue-blurr.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}

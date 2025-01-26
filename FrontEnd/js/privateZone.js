@@ -204,7 +204,7 @@ async function fetchPatients(text) {
             
                     if (text === 'addAssesment') {
                         button.addEventListener('click', () => {
-                            // Agregar funcionalidad aquí
+                            addTreatment(patient.dni);
                         });
                     }
             
@@ -218,6 +218,51 @@ async function fetchPatients(text) {
         console.error("Error al obtener los pacientes:", error);
     }
 }
+
+async function addTreatment(dni) {
+    try {
+        const token = sessionStorage.getItem("jwtToken");
+
+        if (!token) {
+            console.error("Token no encontrado. Redirigiendo a la página de login.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        const url = `http://localhost:7238/Patient?dni=${encodeURIComponent(dni)}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            console.error("Error al obtener los datos del paciente. Código de estado: " + response.status);
+            alert("No se pudo obtener los datos del paciente. Intenta de nuevo.");
+            return;
+        }
+
+        const patientData = await response.json();
+        
+        if (patientData && patientData.length > 0) {
+
+            sessionStorage.setItem("patientData", JSON.stringify(patientData[0]));
+        } else {
+
+            console.error("No se recibieron datos del paciente.");
+            alert("No se encontraron datos para el paciente con el DNI proporcionado.");
+            return;
+        }
+
+        window.location.href = "treatmentZone.html";
+
+    } catch (error) {
+        console.error("Error en la función addTreatment:", error);
+    }
+}
+
 
 
 async function sendForm() {
