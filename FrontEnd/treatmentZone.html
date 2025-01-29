@@ -11,6 +11,33 @@
 
     <div class="welcome-message" id="patientName-container"></div>
 
+    <div class="main-container">
+
+        <div class="card align-items-center card-style date-card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title white-text">Choose the treatment date</h5>
+                <div class="col-auto">
+                    <input class="form-control form-control-sm" type="date" placeholder="Date" aria-label=".form-control-sm example">
+                </div>
+
+                <button type="button" class="btn btn-success" onclick="showSection('cause-card')">Next</button>
+            </div>
+        </div>
+
+
+        <div class="card align-items-center card-style cause-card" style="width: 18rem;"> 
+            <div class="card-body">
+                <h5 class="card-title white-text">Choose the treatment cause</h5>
+                <div class="col-auto">
+                    <input class="form-control form-control-sm" type="text" placeholder="Treatment Cause" aria-label=".form-control-sm example">
+                </div>
+
+                <button type="button" class="btn btn-success" onclick="next('')">Next</button>
+            </div>
+        </div>
+
+    </div>
+
     <script src="./js/treatmentZone.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

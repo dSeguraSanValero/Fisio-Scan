@@ -5,3 +5,37 @@
     background-position: center;
     background-attachment: fixed;
 }
+
+.welcome-message {
+    margin: 3vh;
+    font-size: 5vh;
+    font-weight: bold;
+    text-align: center;
+}
+
+.main-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center; 
+}
+
+.card-style {
+    text-align: center;
+    width: 60vh !important;
+    margin: 15vh;
+}
+
+.card-style.active {
+    display: flex !important;
+}
+
+.date-card {
+    background-color: rgb(188, 218, 244) !important;
+    display: none !important;
+}
+
+.cause-card {
+    background-color: rgb(188, 218, 244) !important;
+    display: none !important;
+}
