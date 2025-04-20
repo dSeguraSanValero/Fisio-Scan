@@ -39,3 +39,54 @@
     background-color: rgb(188, 218, 244) !important;
     display: none !important;
 }
+
+.muscles-container {
+    display: none !important;
+    margin: 0 0 0 50vw !important;
+    height: 80vh !important;
+}
+
+.inputs-container {
+    overflow-y: scroll;
+    width: 100%;
+    padding: 5vh;
+}
+
+.text-input {
+    display: none !important;
+    justify-content: center;
+    align-items: center;
+    padding: 2vh;
+}
+
+.text-input.active {
+    display: flex !important;
+}
+
+.muscles-container svg {
+    position: absolute;
+    width: 575px;
+    height: 575px;
+}
+
+.overlay-container {
+    position: fixed;
+    margin: 5vh 140vw 80vh 0;
+}
+
+.overlay-image {
+    position: absolute;
+    width: 550px;
+}
+
+path {
+    opacity: 0.1;
+    transition: fill 0.3s ease, opacity 0.3s ease;
+}
+
+.muscle:hover {
+    opacity: 1;
+    cursor: pointer;
+    fill: yellow;
+}
+

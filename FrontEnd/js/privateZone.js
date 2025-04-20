@@ -188,7 +188,7 @@ async function fetchPatients(text) {
                             <p><strong>DNI:</strong> ${patient.dni}</p>
                             <p><strong>Birth Date:</strong> ${patient.birthDate}</p>
                         </div>
-                        <button class="toggle-details">View Details</button>
+                        <button class="toggle-details">Select</button>
                     `;
             
                     const button = patientDiv.querySelector('.toggle-details');
@@ -198,7 +198,7 @@ async function fetchPatients(text) {
                         button.addEventListener('click', () => {
                             const isVisible = details.style.display === 'block';
                             details.style.display = isVisible ? 'none' : 'block';
-                            button.textContent = isVisible ? 'View Details' : 'Hide Details';
+                            button.textContent = isVisible ? 'Select' : 'Hide Details';
                         });
                     }
             
