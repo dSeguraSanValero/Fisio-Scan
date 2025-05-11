@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FisioScan.Data.Migrations
 {
     [DbContext(typeof(FisioScanContext))]
-    [Migration("20241230205946_InitialCreate")]
+    [Migration("20250502174339_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,75 @@ namespace FisioScan.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("FisioScan.Models.GeneralAssessment", b =>
+                {
+                    b.Property<int>("GeneralAssessmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GeneralAssessmentId"), 1L, 1);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Height")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicalHistory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Occupation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TreatmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsualPhysicalActivity")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Weight")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GeneralAssessmentId");
+
+                    b.ToTable("GeneralAssessments");
+
+                    b.HasData(
+                        new
+                        {
+                            GeneralAssessmentId = 1,
+                            CreatedBy = 1,
+                            Height = "1.80",
+                            MedicalHistory = "no previous injuries",
+                            Occupation = "engineer",
+                            TreatmentId = 1,
+                            UsualPhysicalActivity = "running",
+                            Weight = "75"
+                        },
+                        new
+                        {
+                            GeneralAssessmentId = 2,
+                            CreatedBy = 1,
+                            Height = "1.80",
+                            MedicalHistory = "Lumbar disc herniation",
+                            Occupation = "engineer",
+                            TreatmentId = 2,
+                            UsualPhysicalActivity = "running",
+                            Weight = "75"
+                        },
+                        new
+                        {
+                            GeneralAssessmentId = 3,
+                            CreatedBy = 2,
+                            Height = "1.73",
+                            MedicalHistory = "no previous injuries",
+                            Occupation = "truck driver",
+                            TreatmentId = 3,
+                            UsualPhysicalActivity = "No physical activity",
+                            Weight = "80"
+                        });
+                });
 
             modelBuilder.Entity("FisioScan.Models.Patient", b =>
                 {

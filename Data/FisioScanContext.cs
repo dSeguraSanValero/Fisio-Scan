@@ -123,6 +123,42 @@ namespace FisioScan.Data
                     TreatmentDate = new DateTime(2024, 12, 27)
                 }
             );
+
+            modelBuilder.Entity<GeneralAssessment>().HasData(
+                new GeneralAssessment
+                {
+                    GeneralAssessmentId = 1,
+                    CreatedBy = 1,
+                    TreatmentId = 1,
+                    UsualPhysicalActivity = "running",
+                    Height = "1.80",
+                    Weight = "75",
+                    Occupation = "engineer",
+                    MedicalHistory = "no previous injuries"
+                },
+                new GeneralAssessment
+                {
+                    GeneralAssessmentId = 2,
+                    CreatedBy = 1,
+                    TreatmentId = 2,
+                    UsualPhysicalActivity = "running",
+                    Height = "1.80",
+                    Weight = "75",
+                    Occupation = "engineer",
+                    MedicalHistory = "Lumbar disc herniation"
+                },
+                new GeneralAssessment
+                {
+                    GeneralAssessmentId = 3,
+                    CreatedBy = 2,
+                    TreatmentId = 3,
+                    UsualPhysicalActivity = "No physical activity",
+                    Height = "1.73",
+                    Weight = "80",
+                    Occupation = "truck driver",
+                    MedicalHistory = "no previous injuries"
+                }
+            );
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -135,6 +171,7 @@ namespace FisioScan.Data
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Physio> Physios { get; set; }
         public DbSet<Treatment> Treatments { get; set; }
+        public DbSet<GeneralAssessment> GeneralAssessments { get; set; }
     }
 }
 

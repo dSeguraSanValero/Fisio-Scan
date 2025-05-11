@@ -10,6 +10,25 @@ namespace FisioScan.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "GeneralAssessments",
+                columns: table => new
+                {
+                    GeneralAssessmentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    TreatmentId = table.Column<int>(type: "int", nullable: false),
+                    UsualPhysicalActivity = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Height = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Weight = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Occupation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MedicalHistory = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GeneralAssessments", x => x.GeneralAssessmentId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Patients",
                 columns: table => new
                 {
@@ -63,6 +82,16 @@ namespace FisioScan.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "GeneralAssessments",
+                columns: new[] { "GeneralAssessmentId", "CreatedBy", "Height", "MedicalHistory", "Occupation", "TreatmentId", "UsualPhysicalActivity", "Weight" },
+                values: new object[,]
+                {
+                    { 1, 1, "1.80", "no previous injuries", "engineer", 1, "running", "75" },
+                    { 2, 1, "1.80", "Lumbar disc herniation", "engineer", 2, "running", "75" },
+                    { 3, 2, "1.73", "no previous injuries", "truck driver", 3, "No physical activity", "80" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Patients",
                 columns: new[] { "PatientId", "BirthDate", "CreatedBy", "Dni", "FirstSurname", "Name", "SecondSurname" },
                 values: new object[,]
@@ -96,6 +125,9 @@ namespace FisioScan.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "GeneralAssessments");
+
             migrationBuilder.DropTable(
                 name: "Patients");
 

@@ -20,7 +20,7 @@ window.onload = function() {
 
     container.appendChild(patientDiv);
 
-    showSection('date-card');   
+    showSection('date-card');
 
 };
 
@@ -41,6 +41,90 @@ function showSection(sectionClass) {
     
     document.querySelectorAll(`.${sectionClass}`).forEach(section => {
         section.classList.add('active');
+    });
+}
+
+async function getPhysioName(token) {
+    try {
+        const response = await fetch("http://localhost:7238/Physio", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            console.error("Error al obtener los datos del fisioterapeuta. Código de estado: " + response.status);
+            return;
+        }
+
+        const data = await response.json();
+        console.log("Datos del fisioterapeuta:", data);
+
+        const container = document.getElementById('physioName-container');
+
+        if (!container) {
+            console.error("No se encontró un elemento con el ID 'physioName-container' en el DOM.");
+            return;
+        }
+
+        if (data && data.length > 0) {
+            const physio = data[0];
+
+            const physioDiv = document.createElement('div');
+
+            physioDiv.innerHTML = `
+                <p><strong>¡Bienvenido ${physio.name}!</strong></p>
+            `;
+
+            container.appendChild(physioDiv);
+        } else {
+            console.error("No se encontraron fisioterapeutas en los datos.");
+        }
+    } catch (error) {
+        console.error("Ocurrió un error al intentar obtener el nombre del fisioterapeuta:", error);
+    }
+}
+
+async function createTreatment() {
+
+    const token = sessionStorage.getItem("jwtToken");
+        
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    const patientData = sessionStorage.getItem("patientData");
+
+    const patient = JSON.parse(patientData);
+    
+    const patientId = patient.patientId;
+    const treatmentDate = document.querySelector('input[placeholder="Treatment Date"]').value;
+    const treatmentCause = document.querySelector('input[placeholder="Treatment Cause"]').value;
+
+    const treatmentData = {
+        patientId: patientId,
+        treatmentCause: treatmentCause,
+        treatmentDate: new Date(treatmentDate).toISOString(),
+    };
+
+    fetch('http://localhost:7238/Treatment', {
+        method: 'POST',
+        headers: {
+        "Authorization": `Bearer ${token}`,
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(treatmentData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Respuesta del servidor:', data);
+    })
+    .catch(error => {
+        console.error('Error al enviar los datos:', error);
     });
 }
 

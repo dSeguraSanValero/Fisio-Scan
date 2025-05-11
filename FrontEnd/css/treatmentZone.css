@@ -1,9 +1,5 @@
 .background {
-    background-image: url("../images/treatment-background-blue-blurr.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
+background-color: rgb(232, 237, 255) !important;
 }
 
 .welcome-message {
@@ -36,6 +32,15 @@
 }
 
 .cause-card {
+    background-color: rgb(188, 218, 244) !important;
+    display: none !important;
+}
+
+.no-bottom-margin {
+    margin: 1vh 0 0 0 !important;
+}
+
+.general-assessment {
     background-color: rgb(188, 218, 244) !important;
     display: none !important;
 }

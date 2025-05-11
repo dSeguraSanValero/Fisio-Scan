@@ -170,47 +170,65 @@ async function fetchPatients(text) {
 
         if (data && Array.isArray(data)) {
             console.log("Pacientes recibidos:", data);
-
+        
             const containers = document.querySelectorAll('#patients-container');
-
+        
             containers.forEach(container => {
                 container.innerHTML = '';
-            
-                data.forEach(patient => {
-                    const patientDiv = document.createElement('div');
-                    patientDiv.className = 'patient-data';
-            
-                    patientDiv.innerHTML = `
-                        <p><strong>Name:</strong> ${patient.name}</p>
-                        <p><strong>First Surname:</strong> ${patient.firstSurname}</p>
-                        <p><strong>Second Surname:</strong> ${patient.secondSurname}</p>
-                        <div class="patient-details" style="display: none;">
-                            <p><strong>DNI:</strong> ${patient.dni}</p>
-                            <p><strong>Birth Date:</strong> ${patient.birthDate}</p>
-                        </div>
-                        <button class="toggle-details">Select</button>
+        
+                // Crear tabla y encabezado
+                const table = document.createElement('table');
+                table.className = 'patients-table';
+        
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>First Surname</th>
+                        <th>Second Surname</th>
+                        <th>NIF</th>
+                        <th>Birth Date</th>
+                        <th>Select</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+        
+                const tbody = document.createElement('tbody');
+        
+                data.forEach((patient, index) => {
+                    const row = document.createElement('tr');
+        
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${patient.name}</td>
+                        <td>${patient.firstSurname}</td>
+                        <td>${patient.secondSurname}</td>
+                        <td>${patient.dni}</td>
+                        <td>${patient.birthDate}</td>
+                        <td><button class="btn btn-success action-button">Select</button></td>
                     `;
-            
-                    const button = patientDiv.querySelector('.toggle-details');
-                    const details = patientDiv.querySelector('.patient-details');
-            
+        
+                    const button = row.querySelector('.action-button');
+        
                     if (text === 'show') {
                         button.addEventListener('click', () => {
-                            const isVisible = details.style.display === 'block';
-                            details.style.display = isVisible ? 'none' : 'block';
-                            button.textContent = isVisible ? 'Select' : 'Hide Details';
+                            alert(`DNI: ${patient.dni}\nFecha de nacimiento: ${patient.birthDate}`);
                         });
                     }
-            
+        
                     if (text === 'addAssesment') {
                         button.addEventListener('click', () => {
                             addTreatment(patient.dni);
                         });
                     }
-            
-                    container.appendChild(patientDiv);
+        
+                    tbody.appendChild(row);
                 });
-            });            
+        
+                table.appendChild(tbody);
+                container.appendChild(table);
+            });
         } else {
             console.error("No se recibieron pacientes o el formato de respuesta es incorrecto");
         }

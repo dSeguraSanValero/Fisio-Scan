@@ -47,6 +47,10 @@
     cursor: pointer;
 }
 
+.card-no-pointer {
+    cursor: default !important;
+}
+
 .card-style.active {
     display: flex !important;
 }
@@ -130,5 +134,22 @@
 
 .return-card:hover {
     box-shadow: 8px 8px 6px rgba(0, 0, 0, 0.5); 
+}
+
+.patients-table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.patients-table th,
+.patients-table td {
+    border: 1px solid #000000;
+    background-color: #ededed;
+    padding: 8px;
+    text-align: left;
+}
+
+.patients-table th {
+    background-color: #b7e5ff;
 }
 
