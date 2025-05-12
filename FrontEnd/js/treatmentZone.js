@@ -24,6 +24,13 @@ window.onload = function() {
 
 };
 
+const slider = document.getElementById('slider');
+const valor = document.getElementById('value');
+
+slider.addEventListener('input', () => {
+  valor.textContent = slider.value;
+});
+
 function showSection(sectionClass) {
     document.querySelectorAll('.card').forEach(section => {
 
@@ -114,17 +121,145 @@ async function createTreatment() {
     fetch('http://localhost:7238/Treatment', {
         method: 'POST',
         headers: {
-        "Authorization": `Bearer ${token}`,
-        'Content-Type': 'application/json'
+            "Authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(treatmentData)
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Respuesta del servidor:', data);
+    .then(async response => {
+        const contentType = response.headers.get("Content-Type");
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error ${response.status}: ${errorText}`);
+        }
+
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            console.log('Respuesta del servidor:', data);
+        } else {
+            const text = await response.text();
+            console.log('Respuesta sin JSON:', text);
+        }
+
+        await storageTreatment();
+
+    })
+
+}
+
+function createGeneralAssessment() {
+
+    const token = sessionStorage.getItem("jwtToken");
+        
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    const treatmentData = sessionStorage.getItem("treatmentResponse");
+
+    console.log("Treatment response recuperada:", treatmentData);
+
+    const treatment = JSON.parse(treatmentData);
+
+    console.log("Tratamiento recuperado:", treatment);
+    console.log("treatmentId:", treatment.treatmentId);
+
+    const thisTreatmentId = treatment[0].treatmentId;
+
+    console.log("thisTreatmentId:", thisTreatmentId);
+
+    const generalAssessmentPainLevel = document.getElementById("slider").value;
+    const generalAssessmentPhysicalActivity = document.querySelector('input[placeholder="Physical Activity"]').value;
+    const generalAssessmentHeight = document.querySelector('input[placeholder="Height"]').value;
+    const generalAssessmentWeight = document.querySelector('input[placeholder="Weight"]').value;
+    const generalAssessmentOccupation = document.querySelector('input[placeholder="Occupation"]').value;
+    const generalAssessmentMedicalHistory = document.querySelector('input[placeholder="Medical History"]').value;
+    
+    const generalAssessmentData = {
+        treatmentId: thisTreatmentId,
+        painLevel: generalAssessmentPainLevel,
+        usualPhysicalActivity: generalAssessmentPhysicalActivity,
+        height: generalAssessmentHeight,
+        weight: generalAssessmentWeight,
+        occupation: generalAssessmentOccupation,
+        medicalHistory: generalAssessmentMedicalHistory,
+    }
+
+    fetch('http://localhost:7238/GeneralAssessment', {
+    method: 'POST',
+    headers: {
+        "Authorization": `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(generalAssessmentData)
+    })
+    .then(async response => {
+        const contentType = response.headers.get("Content-Type");
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error ${response.status}: ${errorText}`);
+        }
+
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            console.log('Respuesta del servidor:', data);
+        } else {
+            const text = await response.text();
+            console.log('Respuesta sin JSON:', text);
+        }
+    })
+}
+
+
+async function storageTreatment() {
+
+    const token = sessionStorage.getItem("jwtToken");
+
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    const treatmentDate = document.querySelector('input[placeholder="Treatment Date"]').value;
+    const treatmentCause = document.querySelector('input[placeholder="Treatment Cause"]').value;
+
+    const url = `http://localhost:7238/Treatment?treatmentCause=${encodeURIComponent(treatmentCause)}&treatmentDate=${encodeURIComponent(treatmentDate)}`;
+
+
+    await fetch(url, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }
+    })
+    .then(async response => {
+        const contentType = response.headers.get("Content-Type");
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error ${response.status}: ${errorText}`);
+        }
+
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            console.log('Respuesta del servidor:', data);
+
+            sessionStorage.setItem("treatmentResponse", JSON.stringify(data));
+        } else {
+            const text = await response.text();
+            console.log('Respuesta sin JSON:', text);
+
+            sessionStorage.setItem("treatmentResponseText", text);
+        }
     })
     .catch(error => {
-        console.error('Error al enviar los datos:', error);
+        console.error('Error al enviar los datos:', error.message);
     });
 }
 

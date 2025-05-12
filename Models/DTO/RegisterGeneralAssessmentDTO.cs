@@ -3,9 +3,12 @@ using System.ComponentModel.DataAnnotations;
 namespace FisioScan.Models
 {
     public class RegisterGeneralAssessmentDTO
-    {
+    {  
         [Required]
         public int TreatmentId { get; set; }
+
+        [Required]
+        public int PainLevel { get; set; } 
 
         [StringLength(50, ErrorMessage = "El ejercicio practicado debe tener menos de 50 caracteres")]
         public string? UsualPhysicalActivity { get; set; }

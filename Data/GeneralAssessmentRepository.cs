@@ -11,7 +11,7 @@ public class GeneralAssessmentRepository : IGeneralAssessmentRepository
         _context = context;
     }
 
-    public IEnumerable<GeneralAssessment> GetAllGeneralAssessments(int? generalAssessmentId, int? createdBy, int? treatmentId, string? usualPhysicalActivity, string? height, string? weight, string? occupation, string? medicalHistory)
+    public IEnumerable<GeneralAssessment> GetAllGeneralAssessments(int? generalAssessmentId, int? createdBy, int? treatmentId, int? painLevel, string? usualPhysicalActivity, string? height, string? weight, string? occupation, string? medicalHistory)
     {
         var query = _context.GeneralAssessments.AsQueryable();
 
@@ -28,6 +28,11 @@ public class GeneralAssessmentRepository : IGeneralAssessmentRepository
         if (treatmentId.HasValue)
         {
             query = query.Where(p => p.TreatmentId == treatmentId);
+        }
+
+        if (painLevel.HasValue)
+        {
+            query = query.Where(p => p.PainLevel == painLevel);
         }
 
         if (!string.IsNullOrEmpty(usualPhysicalActivity))

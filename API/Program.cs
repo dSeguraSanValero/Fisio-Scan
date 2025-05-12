@@ -31,6 +31,8 @@ builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<ITreatmentService, TreatmentService>();
 builder.Services.AddScoped<IGeneralAssessmentRepository, GeneralAssessmentRepository>();
 builder.Services.AddScoped<IGeneralAssessmentService, GeneralAssessmentService>();
+builder.Services.AddScoped<IMuscularAssessmentRepository, MuscularAssessmentRepository>();
+builder.Services.AddScoped<IMuscularAssessmentService, MuscularAssessmentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 

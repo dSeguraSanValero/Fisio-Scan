@@ -128,8 +128,9 @@ namespace FisioScan.Data
                 new GeneralAssessment
                 {
                     GeneralAssessmentId = 1,
-                    CreatedBy = 1,
+                    CreatedBy = 2,
                     TreatmentId = 1,
+                    PainLevel = 6,
                     UsualPhysicalActivity = "running",
                     Height = "1.80",
                     Weight = "75",
@@ -139,8 +140,9 @@ namespace FisioScan.Data
                 new GeneralAssessment
                 {
                     GeneralAssessmentId = 2,
-                    CreatedBy = 1,
+                    CreatedBy = 2,
                     TreatmentId = 2,
+                    PainLevel = 4,
                     UsualPhysicalActivity = "running",
                     Height = "1.80",
                     Weight = "75",
@@ -152,11 +154,47 @@ namespace FisioScan.Data
                     GeneralAssessmentId = 3,
                     CreatedBy = 2,
                     TreatmentId = 3,
+                    PainLevel = 3,
                     UsualPhysicalActivity = "No physical activity",
                     Height = "1.73",
                     Weight = "80",
                     Occupation = "truck driver",
                     MedicalHistory = "no previous injuries"
+                }
+            );
+
+            modelBuilder.Entity<MuscularAssessment>().HasData(
+                new MuscularAssessment
+                {
+                    MuscularAssessmentId = 1,
+                    CreatedBy = 2,
+                    TreatmentId = 1,
+                    MuscleName = "Right Serratus-posterior",
+                    MuscleAssessment = "increased muscle tone"
+                },
+                new MuscularAssessment
+                {
+                    MuscularAssessmentId = 2,
+                    CreatedBy = 2,
+                    TreatmentId = 1,
+                    MuscleName = "Right Latissimus-dorsi",
+                    MuscleAssessment = "painful on palpation"
+                },
+                new MuscularAssessment
+                {
+                    MuscularAssessmentId = 3,
+                    CreatedBy = 2,
+                    TreatmentId = 2,
+                    MuscleName = "Right Latissimus-dorsi",
+                    MuscleAssessment = "painful on palpation"
+                },
+                new MuscularAssessment
+                {
+                    MuscularAssessmentId = 4,
+                    CreatedBy = 3,
+                    TreatmentId = 3,
+                    MuscleName = "Right Deltoid",
+                    MuscleAssessment = "painful on palpation"
                 }
             );
         }
@@ -172,6 +210,7 @@ namespace FisioScan.Data
         public DbSet<Physio> Physios { get; set; }
         public DbSet<Treatment> Treatments { get; set; }
         public DbSet<GeneralAssessment> GeneralAssessments { get; set; }
+        public DbSet<MuscularAssessment> MuscularAssessments { get; set; }
     }
 }
 

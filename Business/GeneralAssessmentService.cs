@@ -12,19 +12,23 @@ public class GeneralAssessmentService : IGeneralAssessmentService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public IEnumerable<GeneralAssessment> GetGeneralAssessments(int? generalAssessmentId, int? createdBy, int? treatmentId, string? usualPhysicalActivity, string? height, string? weight, string? occupation, string? medicalHistory)
+    public IEnumerable<GeneralAssessment> GetGeneralAssessments(int? generalAssessmentId, int? createdBy, int? treatmentId, int? painLevel, string? usualPhysicalActivity, string? height, string? weight, string? occupation, string? medicalHistory)
     {
-        return _repository.GetAllGeneralAssessments(generalAssessmentId, createdBy, treatmentId, usualPhysicalActivity, height, weight, occupation, medicalHistory);
+        return _repository.GetAllGeneralAssessments(generalAssessmentId, createdBy, treatmentId, painLevel, usualPhysicalActivity, height, weight, occupation, medicalHistory);
     }
 
-    public void RegisterGeneralAssessment(string usualPhysicalActivity, string height, string weight, string occupation)
+    public void RegisterGeneralAssessment(int createdBy, int treatmentId, int painLevel, string usualPhysicalActivity, string height, string weight, string occupation, string medicalHistory)
     {
         var newGeneralAssessment = new GeneralAssessment
         {
+            CreatedBy = createdBy,
+            TreatmentId = treatmentId,
+            PainLevel = painLevel,
             UsualPhysicalActivity = usualPhysicalActivity,
             Height = height,
             Weight = weight,
-            Occupation = occupation
+            Occupation = occupation,
+            MedicalHistory = medicalHistory
         };
 
         _repository.AddGeneralAssessment(newGeneralAssessment);

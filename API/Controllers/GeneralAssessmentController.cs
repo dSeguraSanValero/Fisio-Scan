@@ -26,13 +26,13 @@ namespace FisioScan.API.Controllers
 
         [Authorize]
         [HttpGet(Name = "GetAllGeneralAssessments")]
-        public ActionResult<IEnumerable<GeneralAssessment>> SearchGeneralAssessment(int? generalAssessmentId, int? createdBy, int? treatmentId, string? usualPhysicalActivity, string? height, string? weight, string? occupation, string? medicalHistory)
+        public ActionResult<IEnumerable<GeneralAssessment>> SearchGeneralAssessment(int? generalAssessmentId, int? createdBy, int? treatmentId, int? painLevel, string? usualPhysicalActivity, string? height, string? weight, string? occupation, string? medicalHistory)
         {
             if (_authService.HasAccessToResource(User, out int? rolePhysioId))
             {
                 if (rolePhysioId == null)
                 {
-                    var generalAssessments = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, createdBy, treatmentId, usualPhysicalActivity, height, weight, occupation, medicalHistory);
+                    var generalAssessments = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, createdBy, treatmentId, painLevel, usualPhysicalActivity, height, weight, occupation, medicalHistory);
 
                     if (generalAssessments == null || !generalAssessments.Any())
                     {
@@ -45,7 +45,7 @@ namespace FisioScan.API.Controllers
                 if (rolePhysioId.HasValue)
                 {
                     createdBy = rolePhysioId.Value;
-                    var generalAssessments = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, createdBy, treatmentId, usualPhysicalActivity, height, weight, occupation, medicalHistory);
+                    var generalAssessments = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, createdBy, treatmentId, painLevel, usualPhysicalActivity, height, weight, occupation, medicalHistory);
 
                     if (generalAssessments == null || !generalAssessments.Any())
                     {
@@ -57,6 +57,7 @@ namespace FisioScan.API.Controllers
                         p.GeneralAssessmentId,
                         p.CreatedBy,
                         p.TreatmentId,
+                        p.PainLevel,
                         p.UsualPhysicalActivity,
                         p.Height,
                         p.Weight,
@@ -65,6 +66,63 @@ namespace FisioScan.API.Controllers
                     }).ToList();
 
                     return Ok(transformedGeneralAssessments);
+                }
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult RegisterGeneralAssessment([FromBody] RegisterGeneralAssessmentDTO generalAssessmentDTO) 
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    try
+                    {
+                        _generalAssessmentService.RegisterGeneralAssessment(
+                            createdBy: 1,
+                            treatmentId: generalAssessmentDTO.TreatmentId,
+                            painLevel: generalAssessmentDTO.PainLevel,
+                            usualPhysicalActivity: generalAssessmentDTO.UsualPhysicalActivity,
+                            height: generalAssessmentDTO.Height,
+                            weight: generalAssessmentDTO.Weight,
+                            occupation: generalAssessmentDTO.Occupation,
+                            medicalHistory: generalAssessmentDTO.MedicalHistory
+                        );
+
+                        return Ok(new { message = "Valoración general registrada correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    try
+                    {
+                        _generalAssessmentService.RegisterGeneralAssessment(
+                            createdBy: rolePhysioId.Value,
+                            treatmentId: generalAssessmentDTO.TreatmentId,
+                            painLevel: generalAssessmentDTO.PainLevel,
+                            usualPhysicalActivity: generalAssessmentDTO.UsualPhysicalActivity,
+                            height: generalAssessmentDTO.Height,
+                            weight: generalAssessmentDTO.Weight,
+                            occupation: generalAssessmentDTO.Occupation,
+                            medicalHistory: generalAssessmentDTO.MedicalHistory
+                        );
+
+                        return Ok(new { message = "Valoración general registrada correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
                 }
             }
 

@@ -17,6 +17,7 @@ namespace FisioScan.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     TreatmentId = table.Column<int>(type: "int", nullable: false),
+                    PainLevel = table.Column<int>(type: "int", nullable: false),
                     UsualPhysicalActivity = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Height = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Weight = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -26,6 +27,22 @@ namespace FisioScan.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GeneralAssessments", x => x.GeneralAssessmentId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MuscularAssessments",
+                columns: table => new
+                {
+                    MuscularAssessmentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    TreatmentId = table.Column<int>(type: "int", nullable: false),
+                    MuscleName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MuscleAssessment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MuscularAssessments", x => x.MuscularAssessmentId);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,12 +100,23 @@ namespace FisioScan.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "GeneralAssessments",
-                columns: new[] { "GeneralAssessmentId", "CreatedBy", "Height", "MedicalHistory", "Occupation", "TreatmentId", "UsualPhysicalActivity", "Weight" },
+                columns: new[] { "GeneralAssessmentId", "CreatedBy", "Height", "MedicalHistory", "Occupation", "PainLevel", "TreatmentId", "UsualPhysicalActivity", "Weight" },
                 values: new object[,]
                 {
-                    { 1, 1, "1.80", "no previous injuries", "engineer", 1, "running", "75" },
-                    { 2, 1, "1.80", "Lumbar disc herniation", "engineer", 2, "running", "75" },
-                    { 3, 2, "1.73", "no previous injuries", "truck driver", 3, "No physical activity", "80" }
+                    { 1, 2, "1.80", "no previous injuries", "engineer", 6, 1, "running", "75" },
+                    { 2, 2, "1.80", "Lumbar disc herniation", "engineer", 4, 2, "running", "75" },
+                    { 3, 2, "1.73", "no previous injuries", "truck driver", 3, 3, "No physical activity", "80" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "MuscularAssessments",
+                columns: new[] { "MuscularAssessmentId", "CreatedBy", "MuscleAssessment", "MuscleName", "TreatmentId" },
+                values: new object[,]
+                {
+                    { 1, 2, "increased muscle tone", "Right Serratus-posterior", 1 },
+                    { 2, 2, "painful on palpation", "Right Latissimus-dorsi", 1 },
+                    { 3, 2, "painful on palpation", "Right Latissimus-dorsi", 2 },
+                    { 4, 3, "painful on palpation", "Right Deltoid", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -127,6 +155,9 @@ namespace FisioScan.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "GeneralAssessments");
+
+            migrationBuilder.DropTable(
+                name: "MuscularAssessments");
 
             migrationBuilder.DropTable(
                 name: "Patients");

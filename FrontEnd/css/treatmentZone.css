@@ -95,3 +95,18 @@ path {
     fill: yellow;
 }
 
+.slider-container {
+    width: 300px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+input[type="range"] {
+width: 100%;
+}
+
+.value {
+font-size: 1.2em;
+margin-top: 10px;
+}
+

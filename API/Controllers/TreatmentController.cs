@@ -94,6 +94,8 @@ namespace FisioScan.API.Controllers
                             treatmentDate: treatmentDTO.TreatmentDate
                         );
 
+                        return Ok(new { message = "Tratamiento registrado correctamente" });
+
                     }
                     catch (Exception e)
                     {
@@ -111,6 +113,8 @@ namespace FisioScan.API.Controllers
                             treatmentCause: treatmentDTO.TreatmentCause,
                             treatmentDate: treatmentDTO.TreatmentDate
                         );
+
+                        return Ok(new { message = "Tratamiento registrado correctamente" });
 
                     }
                     catch (Exception e)

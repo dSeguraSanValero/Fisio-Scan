@@ -42,6 +42,9 @@ namespace FisioScan.Data.Migrations
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PainLevel")
+                        .HasColumnType("int");
+
                     b.Property<int>("TreatmentId")
                         .HasColumnType("int");
 
@@ -59,10 +62,11 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             GeneralAssessmentId = 1,
-                            CreatedBy = 1,
+                            CreatedBy = 2,
                             Height = "1.80",
                             MedicalHistory = "no previous injuries",
                             Occupation = "engineer",
+                            PainLevel = 6,
                             TreatmentId = 1,
                             UsualPhysicalActivity = "running",
                             Weight = "75"
@@ -70,10 +74,11 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             GeneralAssessmentId = 2,
-                            CreatedBy = 1,
+                            CreatedBy = 2,
                             Height = "1.80",
                             MedicalHistory = "Lumbar disc herniation",
                             Occupation = "engineer",
+                            PainLevel = 4,
                             TreatmentId = 2,
                             UsualPhysicalActivity = "running",
                             Weight = "75"
@@ -85,9 +90,71 @@ namespace FisioScan.Data.Migrations
                             Height = "1.73",
                             MedicalHistory = "no previous injuries",
                             Occupation = "truck driver",
+                            PainLevel = 3,
                             TreatmentId = 3,
                             UsualPhysicalActivity = "No physical activity",
                             Weight = "80"
+                        });
+                });
+
+            modelBuilder.Entity("FisioScan.Models.MuscularAssessment", b =>
+                {
+                    b.Property<int>("MuscularAssessmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MuscularAssessmentId"), 1L, 1);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MuscleAssessment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MuscleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TreatmentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MuscularAssessmentId");
+
+                    b.ToTable("MuscularAssessments");
+
+                    b.HasData(
+                        new
+                        {
+                            MuscularAssessmentId = 1,
+                            CreatedBy = 2,
+                            MuscleAssessment = "increased muscle tone",
+                            MuscleName = "Right Serratus-posterior",
+                            TreatmentId = 1
+                        },
+                        new
+                        {
+                            MuscularAssessmentId = 2,
+                            CreatedBy = 2,
+                            MuscleAssessment = "painful on palpation",
+                            MuscleName = "Right Latissimus-dorsi",
+                            TreatmentId = 1
+                        },
+                        new
+                        {
+                            MuscularAssessmentId = 3,
+                            CreatedBy = 2,
+                            MuscleAssessment = "painful on palpation",
+                            MuscleName = "Right Latissimus-dorsi",
+                            TreatmentId = 2
+                        },
+                        new
+                        {
+                            MuscularAssessmentId = 4,
+                            CreatedBy = 3,
+                            MuscleAssessment = "painful on palpation",
+                            MuscleName = "Right Deltoid",
+                            TreatmentId = 3
                         });
                 });
 
