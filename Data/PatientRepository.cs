@@ -66,4 +66,10 @@ public class PatientRepository : IPatientRepository
         _context.Patients.Remove(patient);
         _context.SaveChanges();
     }
+
+    public void UpdatePatient(Patient patient)
+    {
+        _context.Patients.Update(patient);
+        _context.SaveChanges();
+    }
 }

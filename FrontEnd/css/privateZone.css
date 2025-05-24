@@ -89,6 +89,20 @@
     margin: 0 !important;
 }
 
+.assessment-cards {
+    display: none !important;
+    background-color: rgb(212, 211, 197) !important;
+    min-width: 80% !important;
+    margin: 0 !important;
+}
+
+.treatment-cards {
+    display: none !important;
+    background-color: rgb(212, 211, 197) !important;
+    min-width: 80% !important;
+    margin: 0 !important;
+}
+
 .patient-form {
     display: none !important;
     background-color: rgb(218, 225, 255) !important;
@@ -151,5 +165,22 @@
 
 .patients-table th {
     background-color: #b7e5ff;
+}
+
+.treatments-table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.treatments-table th,
+.treatments-table td {
+    border: 1px solid #000000;
+    background-color: #ededed;
+    padding: 8px;
+    text-align: left;
+}
+
+.treatments-table th {
+    background-color: #ffb7b7;
 }
 

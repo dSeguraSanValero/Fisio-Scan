@@ -32,7 +32,7 @@ namespace FisioScan.API.Controllers
                 if (rolePhysioId == null)
                 {
                     var patients = _patientService.GetPatients(dni, createdBy, name, firstSurname, secondSurname, birthDate);
-                    
+
                     if (patients == null || !patients.Any())
                     {
                         return NotFound("No se encontraron pacientes con los parámetros proporcionados.");
@@ -46,7 +46,7 @@ namespace FisioScan.API.Controllers
                         p.FirstSurname,
                         p.SecondSurname,
                         p.Dni,
-                        BirthDate = p.BirthDate.ToString("yyyy-MM-dd")
+                        BirthDate = p.BirthDate.ToString("MM-dd-yyyy")
                     }).ToList();
 
                     return Ok(transformedPatients);
@@ -70,13 +70,13 @@ namespace FisioScan.API.Controllers
                         p.FirstSurname,
                         p.SecondSurname,
                         p.Dni,
-                        BirthDate = p.BirthDate.ToString("yyyy-MM-dd")
+                        BirthDate = p.BirthDate.ToString("MM-dd-yyyy")
                     }).ToList();
 
                     return Ok(transformedPatients);
                 }
             }
-            
+
             return Unauthorized("Acceso denegado");
         }
 
@@ -127,11 +127,70 @@ namespace FisioScan.API.Controllers
                         return BadRequest(e.Message);
                     }
                 }
-                
+
             }
 
-        return Unauthorized("Acceso denegado");
+            return Unauthorized("Acceso denegado");
         }
+
+
+        [Authorize]
+        [HttpDelete("{patientId}")]
+        public IActionResult DeletePatient(int patientId)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                try
+                {
+                    var patient = _patientService.GetPatients(null, null, null, null, null, DateTime.MinValue).FirstOrDefault(p => p.PatientId == patientId);
+
+                    if (patient == null)
+                        return NotFound($"No se encontró un paciente con patientId: {patientId}");
+
+                    if (rolePhysioId.HasValue && patient.CreatedBy != rolePhysioId.Value)
+                        return Forbid("No tienes permiso para eliminar este paciente.");
+
+                    _patientService.DeletePatient(patient);
+                    return NoContent();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
+
+        [Authorize]
+        [HttpPut("{patientId}")]
+        public IActionResult UpdatePatient(int patientId, [FromBody] UpdatePatientDTO patientDTO)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                try
+                {
+                    var patient = _patientService.GetPatients(null, null, null, null, null, DateTime.MinValue).FirstOrDefault(p => p.PatientId == patientId);
+
+                    if (patient == null)
+                        return NotFound($"No se encontró un paciente con patientId: {patientId}");
+
+                    if (rolePhysioId.HasValue && patient.CreatedBy != rolePhysioId.Value)
+                        return Forbid("No tienes permiso para actualizar este paciente.");
+
+                    _patientService.UpdatePatient(patient, patientDTO.Name, patientDTO.FirstSurname, patientDTO.SecondSurname, patientDTO.Dni, patientDTO.BirthDate);
+                    return NoContent();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
     }
 }
 

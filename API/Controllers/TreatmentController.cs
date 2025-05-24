@@ -126,6 +126,74 @@ namespace FisioScan.API.Controllers
 
         return Unauthorized("Acceso denegado");
         }
+
+
+        [Authorize]
+        [HttpDelete("{treatmentId}")]
+        public IActionResult RemoveTreatment(int treatmentId)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    try
+                    {
+                        _treatmentService.RemoveTreatment(treatmentId);
+                        return Ok(new { message = "Tratamiento eliminado correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    try
+                    {
+                        _treatmentService.RemoveTreatment(treatmentId);
+                        return Ok(new { message = "Tratamiento eliminado correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }  
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
+
+        [Authorize]
+        [HttpPut("{treatmentId}")]
+        public IActionResult UpdateTreatment(int treatmentId, [FromBody] UpdateTreatmentDTO treatmentDTO)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null || rolePhysioId.HasValue)
+                {
+                    try
+                    {
+                        _treatmentService.UpdateTreatment(
+                            treatmentId,
+                            treatmentDTO.TreatmentCause,
+                            treatmentDTO.TreatmentDate
+                        );
+
+                        return Ok(new { message = "Tratamiento actualizado correctamente" });
+
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }  
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+ 
     }
 
 }

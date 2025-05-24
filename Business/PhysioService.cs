@@ -38,10 +38,14 @@ namespace FisioScan.Business
             _repository.RemovePhysio(physio);
         }
 
-        public void UpdatePhysio(Physio physio, string password, string email)
+        public void UpdatePhysio(Physio physio, string name, string firstSurname, string secondSurname, string email, int registrationNumber, string password)
         {
-            physio.Password = password;
+            physio.Name = name;
+            physio.FirstSurname = firstSurname;
+            physio.SecondSurname = secondSurname;
             physio.Email = email;
+            physio.RegistrationNumber = registrationNumber;
+            physio.Password = password;
 
             _repository.UpdatePhysioDetails(physio);
         }

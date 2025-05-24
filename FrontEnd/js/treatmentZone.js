@@ -215,6 +215,82 @@ function createGeneralAssessment() {
 }
 
 
+function createMuscleAssessments() {
+    const token = sessionStorage.getItem("jwtToken");
+
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    const treatmentData = sessionStorage.getItem("treatmentResponse");
+
+    if (!treatmentData) {
+        console.error("No se encontró treatmentResponse en sessionStorage.");
+        return;
+    }
+
+    const treatment = JSON.parse(treatmentData);
+    const thisTreatmentId = treatment[0].treatmentId;
+
+    // Seleccionamos todos los bloques de músculos
+    const muscleBlocks = document.querySelectorAll('.inputs-container .text-input');
+
+    muscleBlocks.forEach(block => {
+        const input = block.querySelector('input');
+        const label = block.querySelector('label');
+
+        if (input && label && input.value.trim() !== "") {
+            const muscleName = label.getAttribute("for");
+            const inputValue = input.value.trim();
+
+            const muscleData = {
+                treatmentId: thisTreatmentId,
+                muscleName: muscleName,
+                muscleAssessment: inputValue
+            };
+
+            console.log(`Enviando datos para ${muscleName}:`, muscleData);
+
+            fetch('http://localhost:7238/MuscularAssessment', {
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(muscleData)
+            })
+            .then(async response => {
+                const contentType = response.headers.get("Content-Type");
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error ${response.status}: ${errorText}`);
+                }
+
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await response.json();
+                    console.log(`Respuesta del servidor para ${muscleName}:`, data);
+                } else {
+                    const text = await response.text();
+                    console.log(`Respuesta sin JSON para ${muscleName}:`, text);
+                }
+            })
+            .catch(error => {
+                console.error(`Error al enviar datos para ${muscleName}:`, error);
+            });
+        }
+    });
+
+    alert("Tratamiento creado correctamente");
+
+    window.location.href = "privateZone.html";
+}
+
+
+
+
 async function storageTreatment() {
 
     const token = sessionStorage.getItem("jwtToken");

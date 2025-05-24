@@ -121,5 +121,47 @@ public class PhysioController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
         }
     }
+
+
+    [HttpPut("{physioId}")]
+    public IActionResult UpdatePhysio(int physioId, [FromBody] UpdatePhysioDTO physioDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var physios = _physioService.GetPhysios(null, null, null, null, null, null, null, null, null);
+            var physio = physios.FirstOrDefault(p => p.PhysioId == physioId);
+
+            if (physio == null)
+            {
+                return NotFound();
+            }
+
+            _physioService.UpdatePhysio(physio, 
+                physioDTO.Name,
+                physioDTO.FirstSurname,
+                physioDTO.SecondSurname,
+                physioDTO.Email,
+                physioDTO.RegistrationNumber,
+                physioDTO.Password
+            );
+
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogInformation(ex.Message);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar el fisioterapeuta.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error interno al procesar la solicitud.");
+        }
+    }
 }
 

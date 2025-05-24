@@ -29,4 +29,32 @@ public class TreatmentService : ITreatmentService
 
         _repository.AddTreatment(newTreatment);
     }
+
+    public void RemoveTreatment(int treatmentId)
+    {
+        var treatment = _repository.GetAllTreatments(treatmentId, null, null, null, default).FirstOrDefault();
+        if (treatment != null)
+        {
+            _repository.RemoveTreatment(treatment);
+        }
+        else
+        {
+            throw new KeyNotFoundException($"Treatment with ID {treatmentId} not found.");
+        }
+    }
+
+    public void UpdateTreatment(int treatmentId, string treatmentCause, DateTime treatmentDate)
+    {
+        var treatment = _repository.GetAllTreatments(treatmentId, null, null, null, default).FirstOrDefault();
+        if (treatment != null)
+        {
+            treatment.TreatmentCause = treatmentCause;
+            treatment.TreatmentDate = treatmentDate;
+            _repository.UpdateTreatment(treatment);
+        }
+        else
+        {
+            throw new KeyNotFoundException($"Treatment with ID {treatmentId} not found.");
+        }
+    }
 }

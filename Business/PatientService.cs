@@ -37,4 +37,14 @@ public class PatientService : IPatientService
     {
         _repository.RemovePatient(patient);
     }
+
+    public void UpdatePatient(Patient patient, string name, string firstSurname, string secondSurname, string dni, DateTime birthDate)
+    {
+        patient.Name = name;
+        patient.FirstSurname = firstSurname;
+        patient.SecondSurname = secondSurname;
+        patient.Dni = dni;
+        patient.BirthDate = birthDate;
+        _repository.UpdatePatient(patient);
+    }
 }

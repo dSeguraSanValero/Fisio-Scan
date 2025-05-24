@@ -73,7 +73,7 @@
             </div>
           </div>
 
-          <div class="card align-items-center card-style archive-cards" style="width: 18rem;" onclick="cardClicked()">
+          <div class="card align-items-center card-style archive-cards" style="width: 18rem;" onclick="fetchPatients('searchAssessment'), showSection('assessment-cards')">
             <img class="logo" src="./images/search-assessment.png" alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title white-text">Search Assessment</h5>
@@ -88,7 +88,6 @@
           </div>
       </div>
     </div>
-
 
 
     <div class="card align-items-center card-style add-assesment card-no-pointer">
@@ -143,6 +142,59 @@
       <button class="btn btn-secondary" onclick="showSection('archive-cards')">Go back</button>
 
     </div>
+
+    <div class="card align-items-center card-style assessment-cards card-no-pointer">
+      <h1>Lista de Pacientes</h1>
+
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="Name" aria-label=".form-control-sm example">
+        </div>
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="First Surname" aria-label=".form-control-sm example">
+        </div>
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="Second Surname" aria-label=".form-control-sm example">
+        </div>
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="number" placeholder="NIF" aria-label=".form-control-sm example">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="fetchPatients('searchAssessment')">Search</button>
+
+      <div id="patients-container"></div>
+
+      <button class="btn btn-secondary" onclick="showSection('archive-cards')">Go back</button>
+
+    </div>
+
+
+
+
+
+    <div class="card align-items-center card-style treatment-cards card-no-pointer">
+      <h1>Lista de Tratamientos</h1>
+
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="Treatment Cause" aria-label=".form-control-sm example">
+        </div>
+        <div class="col-auto">
+          <input class="form-control form-control-sm" type="text" placeholder="Treatment Date" aria-label=".form-control-sm example">
+        </div>
+      </div>
+
+      <div id="treatments-container"></div>
+
+      <button class="btn btn-primary" onclick="fetchPatients('searchAssessment')">Search</button>
+
+      <button class="btn btn-secondary" onclick="showSection('assessment-cards')">Go back</button>
+
+    </div>
+
+
+
 
 
     <div class="card align-items-center card-style patient-form">

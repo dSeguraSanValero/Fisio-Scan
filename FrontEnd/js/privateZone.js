@@ -176,7 +176,6 @@ async function fetchPatients(text) {
             containers.forEach(container => {
                 container.innerHTML = '';
         
-                // Crear tabla y encabezado
                 const table = document.createElement('table');
                 table.className = 'patients-table';
         
@@ -222,6 +221,12 @@ async function fetchPatients(text) {
                             addTreatment(patient.dni);
                         });
                     }
+
+                    if (text === 'searchAssessment') {
+                        button.addEventListener('click', () => {
+                            searchTreatment(patient.patientId);
+                        });
+                    }
         
                     tbody.appendChild(row);
                 });
@@ -236,6 +241,125 @@ async function fetchPatients(text) {
         console.error("Error al obtener los pacientes:", error);
     }
 }
+
+
+async function fetchTreatments(patientId) {
+    try {
+        const token = sessionStorage.getItem("jwtToken");
+        
+        if (!token) {
+            console.error("Token no encontrado. Redirigiendo a la página de login.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        const treatmentCauseInputs = document.querySelectorAll('input[placeholder="Treatment Cause"]');
+        const treatmentDateInputs = document.querySelectorAll('input[placeholder="Treatment Date"]');
+
+        function getInputValues(inputs) {
+            return Array.from(inputs)
+                .map(input => input.value.trim())
+                .filter(value => value !== '');
+        }
+
+        const treatmentCause = getInputValues(treatmentCauseInputs);
+        const treatmentDate = getInputValues(treatmentDateInputs);
+
+        let url = "http://localhost:7238/Treatment";
+
+        let params = [];
+
+        if (patientId) {
+            params.push(`patientId=${encodeURIComponent(patientId)}`);
+        }
+
+        if (treatmentCause.length > 0) {
+            treatmentCause.forEach(cause => {
+                params.push(`treatmentCause=${encodeURIComponent(cause)}`);
+            });
+        }
+
+        if (treatmentDate.length > 0) {
+            treatmentDate.forEach(date => {
+                params.push(`treatmentDate=${encodeURIComponent(date)}`);
+            });
+        }
+
+        if (params.length > 0) {
+            url += `?${params.join('&')}`;
+        }
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+
+        if (!response.ok) {
+            console.error("Error al obtener los tratamientos. Código de estado: " + response.status);
+            alert("No se encontraron tratamientos con esos datos. Intenta de nuevo.");
+            return;
+        }        
+
+        const data = await response.json();
+
+        if (data && Array.isArray(data)) {
+            console.log("Tratamientos recibidos:", data);
+
+            const containers = document.querySelectorAll('#treatments-container');
+        
+            containers.forEach(container => {
+                container.innerHTML = '';
+        
+                const table = document.createElement('table');
+                table.className = 'treatments-table';
+        
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>#</th>
+                        <th>Treatment Cause</th>
+                        <th>Treatment Date</th>
+                        <th>Select</th>
+                    </tr>
+                `;
+                table.appendChild(thead);
+        
+                const tbody = document.createElement('tbody');
+
+                data.forEach((treatment, index) => {
+                    const row = document.createElement('tr');
+        
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${treatment.treatmentCause}</td>
+                        <td>${treatment.treatmentDate}</td>
+                        <td><button class="btn btn-success action-button">Select</button></td>
+                    `;
+
+                    const button = row.querySelector('.action-button');
+
+                    button.addEventListener('click', () => {
+                        displayTreatment(treatment.treatmentId)
+                    });
+        
+                    tbody.appendChild(row);
+                });
+        
+                table.appendChild(tbody);
+                container.appendChild(table);
+            });
+        } else {
+            console.error("No se recibieron tratamientos o el formato de respuesta es incorrecto");
+        }
+    } catch (error) {
+        console.error("Error al obtener los tratamientos:", error);
+    }
+}
+
 
 async function addTreatment(dni) {
     try {
@@ -281,6 +405,85 @@ async function addTreatment(dni) {
     }
 }
 
+
+async function searchTreatment(patientId) {
+    try {
+        const token = sessionStorage.getItem("jwtToken");
+
+        if (!token) {
+            console.error("Token no encontrado. Redirigiendo a la página de login.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        const url = `http://localhost:7238/Patient?patientId=${encodeURIComponent(patientId)}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            console.error("Error al obtener los datos del paciente. Código de estado: " + response.status);
+            alert("No se pudo obtener los datos del paciente. Intenta de nuevo.");
+            return;
+        }
+
+        const patientData = await response.json();
+        
+        if (patientData && patientData.length > 0) {
+
+            sessionStorage.setItem("patientData", JSON.stringify(patientData[0]));
+        } else {
+
+            console.error("No se recibieron datos del paciente.");
+            alert("No se encontraron datos para el paciente con el DNI proporcionado.");
+            return;
+        }
+
+        showSection('treatment-cards');
+        fetchTreatments(patientId);
+        console.log(`${patientId}`);
+
+    } catch (error) {
+        console.error("Error en la función searchTreatment:", error);
+    }   
+}
+
+
+async function displayTreatment(treatmentId) {
+    try {
+
+        const token = sessionStorage.getItem("jwtToken");
+
+        if (!token) {
+            console.error("Token no encontrado. Redirigiendo a la página de login.");
+            window.location.href = "index.html";
+            return;
+        }
+
+    
+        const url = `http://localhost:7238/Treatment?treatmentId=${encodeURIComponent(treatmentId)}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const treatmentData = await response.json();
+
+        sessionStorage.setItem("thisTreatment", JSON.stringify(treatmentData[0]));
+
+        window.location.href = "displayTreatment.html";
+
+    } catch (error) {
+        console.error("Error en la función displayTreatment:", error);
+    }   
+}
 
 
 async function sendForm() {

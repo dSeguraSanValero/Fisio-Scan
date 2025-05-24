@@ -10,5 +10,5 @@ public interface IPhysioService
     
     public void DeletePhysio(Physio physio);
 
-    public void UpdatePhysio(Physio physio, string password, string email);
+    public void UpdatePhysio(Physio physio, string name, string firstSurname, string secondSurname, string email, int registrationNumber, string password);
 }

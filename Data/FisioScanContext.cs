@@ -63,7 +63,7 @@ namespace FisioScan.Data
                     FirstSurname = "González",
                     SecondSurname = "Rodríguez",
                     Dni = "724264567",
-                    BirthDate = new DateTime(1980, 5, 10)
+                    BirthDate = new DateTime(1990 , 1, 2)
                 },
                 new Patient 
                 { 
@@ -73,7 +73,7 @@ namespace FisioScan.Data
                     FirstSurname = "Sánchez",
                     SecondSurname = "Martínez",
                     Dni = "723626246",
-                    BirthDate = new DateTime(1995, 2, 13)
+                    BirthDate = new DateTime(1985, 5, 4)
                 },
                 new Patient 
                 { 
@@ -83,7 +83,7 @@ namespace FisioScan.Data
                     FirstSurname = "Sanz",
                     SecondSurname = "Gimenez",
                     Dni = "745751345",
-                    BirthDate = new DateTime(1974, 11, 22)
+                    BirthDate = new DateTime(1995, 3, 22)
                 },
                 new Patient
                 {
@@ -93,7 +93,7 @@ namespace FisioScan.Data
                     FirstSurname = "Prieto",
                     SecondSurname = "Alonso",
                     Dni = "714265724",
-                    BirthDate = new DateTime(1965, 3, 12)
+                    BirthDate = new DateTime(1988, 3, 12)
                 }
             );
 

@@ -56,4 +56,11 @@ public class TreatmentRepository : ITreatmentRepository
         _context.Treatments.Remove(treatment);
         _context.SaveChanges();
     }
+
+
+    public void UpdateTreatment(Treatment treatment)
+    {
+        _context.Treatments.Update(treatment);
+        _context.SaveChanges();
+    }
 }

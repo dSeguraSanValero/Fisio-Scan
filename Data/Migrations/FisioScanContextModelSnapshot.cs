@@ -192,7 +192,7 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             PatientId = 1,
-                            BirthDate = new DateTime(1980, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            BirthDate = new DateTime(1990, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = 1,
                             Dni = "724264567",
                             FirstSurname = "González",
@@ -202,7 +202,7 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             PatientId = 2,
-                            BirthDate = new DateTime(1995, 2, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            BirthDate = new DateTime(1985, 5, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = 2,
                             Dni = "723626246",
                             FirstSurname = "Sánchez",
@@ -212,7 +212,7 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             PatientId = 3,
-                            BirthDate = new DateTime(1974, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            BirthDate = new DateTime(1995, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = 2,
                             Dni = "745751345",
                             FirstSurname = "Sanz",
@@ -222,7 +222,7 @@ namespace FisioScan.Data.Migrations
                         new
                         {
                             PatientId = 4,
-                            BirthDate = new DateTime(1965, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            BirthDate = new DateTime(1988, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = 3,
                             Dni = "714265724",
                             FirstSurname = "Prieto",
