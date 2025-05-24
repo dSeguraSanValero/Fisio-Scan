@@ -4,9 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using FisioScan.Business;
 using FisioScan.Data;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -39,7 +36,7 @@ builder.Services.AddScoped<IMuscularAssessmentService, MuscularAssessmentService
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
-var connectionString = builder.Configuration.GetConnectionString("ServerDB_dockernet");
+var connectionString = builder.Configuration.GetConnectionString("ServerDB_localhost");
 
 builder.Services.AddDbContext<FisioScanContext>(options =>
     options.UseSqlServer(connectionString)

@@ -75,7 +75,7 @@ namespace FisioScan.API.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult RegisterGeneralAssessment([FromBody] RegisterGeneralAssessmentDTO generalAssessmentDTO) 
+        public IActionResult RegisterGeneralAssessment([FromBody] RegisterGeneralAssessmentDTO generalAssessmentDTO)
         {
             if (_authService.HasAccessToResource(User, out int? rolePhysioId))
             {
@@ -118,6 +118,124 @@ namespace FisioScan.API.Controllers
                         );
 
                         return Ok(new { message = "Valoración general registrada correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
+
+        [Authorize]
+        [HttpDelete("{generalAssessmentId}")]
+        public IActionResult RemoveGeneralAssessment(int generalAssessmentId)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    try
+                    {
+                        var generalAssessment = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, null, null, null, null, null, null, null, null).FirstOrDefault();
+                        if (generalAssessment == null)
+                        {
+                            return NotFound("Valoración general no encontrada.");
+                        }
+
+                        _generalAssessmentService.RemoveGeneralAssessment(generalAssessment);
+                        return Ok(new { message = "Valoración general eliminada correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    try
+                    {
+                        var generalAssessment = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, rolePhysioId.Value, null, null, null, null, null, null, null).FirstOrDefault();
+                        if (generalAssessment == null)
+                        {
+                            return NotFound("Valoración general no encontrada.");
+                        }
+
+                        _generalAssessmentService.RemoveGeneralAssessment(generalAssessment);
+                        return Ok(new { message = "Valoración general eliminada correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
+
+        [Authorize]
+        [HttpPut("{generalAssessmentId}")]
+        public IActionResult UpdateGeneralAssessment(int generalAssessmentId, [FromBody] UpdateGeneralAssessmentDTO generalAssessmentDTO)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    try
+                    {
+                        var generalAssessment = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, null, null, null, null, null, null, null, null).FirstOrDefault();
+                        if (generalAssessment == null)
+                        {
+                            return NotFound("Valoración general no encontrada.");
+                        }
+
+                        _generalAssessmentService.UpdateGeneralAssessment(
+                            generalAssessment,
+                            generalAssessmentId,
+                            generalAssessmentDTO.PainLevel,
+                            generalAssessmentDTO.UsualPhysicalActivity,
+                            generalAssessmentDTO.Height,
+                            generalAssessmentDTO.Weight,
+                            generalAssessmentDTO.Occupation,
+                            generalAssessmentDTO.MedicalHistory
+                        );
+
+                        return Ok(new { message = "Valoración general actualizada correctamente" });
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(e.Message);
+                    }
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    try
+                    {
+                        var generalAssessment = _generalAssessmentService.GetGeneralAssessments(generalAssessmentId, rolePhysioId.Value, null, null, null, null, null, null, null).FirstOrDefault();
+                        if (generalAssessment == null)
+                        {
+                            return NotFound("Valoración general no encontrada.");
+                        }
+
+                        _generalAssessmentService.UpdateGeneralAssessment(
+                            generalAssessment: generalAssessment,
+                            generalAssessmentId: generalAssessmentId,
+                            painLevel: generalAssessmentDTO.PainLevel,
+                            usualPhysicalActivity: generalAssessmentDTO.UsualPhysicalActivity,
+                            height: generalAssessmentDTO.Height,
+                            weight: generalAssessmentDTO.Weight,
+                            occupation: generalAssessmentDTO.Occupation,
+                            medicalHistory: generalAssessmentDTO.MedicalHistory
+                        );
+
+                        return Ok(new { message = "Valoración general actualizada correctamente" });
                     }
                     catch (Exception e)
                     {

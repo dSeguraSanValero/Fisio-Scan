@@ -10,7 +10,6 @@ namespace FisioScan.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-
     public class MuscularAssessmentController : ControllerBase
     {
         private readonly ILogger<MuscularAssessmentController> _logger;
@@ -23,6 +22,7 @@ namespace FisioScan.API.Controllers
             _muscularAssessmentService = muscularAssessmentService;
             _authService = authService;
         }
+
 
         [Authorize]
         [HttpGet(Name = "GetAllMuscularAssessments")]
@@ -58,7 +58,7 @@ namespace FisioScan.API.Controllers
                         p.CreatedBy,
                         p.TreatmentId,
                         p.MuscleName,
-                        p.MuscleAssessment 
+                        p.MuscleAssessment
                     }).ToList();
 
                     return Ok(transformedMuscularAssessments);
@@ -111,6 +111,76 @@ namespace FisioScan.API.Controllers
                     {
                         return BadRequest(e.Message);
                     }
+                }
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
+
+        [Authorize]
+        [HttpDelete("{muscularAssessmentId}")]
+        public IActionResult RemoveMuscularAssessment(int muscularAssessmentId)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    var muscularAssessment = _muscularAssessmentService.GetMuscularAssessments(muscularAssessmentId, null, null, null, null).FirstOrDefault();
+                    if (muscularAssessment == null)
+                    {
+                        return NotFound("Valoración muscular no encontrada.");
+                    }
+
+                    _muscularAssessmentService.RemoveMuscularAssessment(muscularAssessment);
+                    return Ok(new { message = "Valoración muscular eliminada correctamente" });
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    var muscularAssessment = _muscularAssessmentService.GetMuscularAssessments(muscularAssessmentId, rolePhysioId.Value, null, null, null).FirstOrDefault();
+                    if (muscularAssessment == null)
+                    {
+                        return NotFound("Valoración muscular no encontrada.");
+                    }
+
+                    _muscularAssessmentService.RemoveMuscularAssessment(muscularAssessment);
+                    return Ok(new { message = "Valoración muscular eliminada correctamente" });
+                }
+            }
+
+            return Unauthorized("Acceso denegado");
+        }
+
+
+        [Authorize]
+        [HttpPut("{muscularAssessmentId}")]
+        public IActionResult UpdateMuscularAssessment(int muscularAssessmentId, [FromBody] UpdateMuscularAssessmentDTO muscularAssessmentDTO)
+        {
+            if (_authService.HasAccessToResource(User, out int? rolePhysioId))
+            {
+                if (rolePhysioId == null)
+                {
+                    var muscularAssessment = _muscularAssessmentService.GetMuscularAssessments(muscularAssessmentId, null, null, null, null).FirstOrDefault();
+                    if (muscularAssessment == null)
+                    {
+                        return NotFound("Valoración muscular no encontrada.");
+                    }
+
+                    _muscularAssessmentService.UpdateMuscularAssessment(muscularAssessment, muscularAssessmentId, muscularAssessmentDTO.MuscleAssessment);
+                    return Ok(new { message = "Valoración muscular actualizada correctamente" });
+                }
+
+                if (rolePhysioId.HasValue)
+                {
+                    var muscularAssessment = _muscularAssessmentService.GetMuscularAssessments(muscularAssessmentId, rolePhysioId.Value, null, null, null).FirstOrDefault();
+                    if (muscularAssessment == null)
+                    {
+                        return NotFound("Valoración muscular no encontrada.");
+                    }
+
+                    _muscularAssessmentService.UpdateMuscularAssessment(muscularAssessment, muscularAssessmentId, muscularAssessmentDTO.MuscleAssessment);
+                    return Ok(new { message = "Valoración muscular actualizada correctamente" });
                 }
             }
 

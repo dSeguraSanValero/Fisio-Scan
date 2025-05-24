@@ -29,4 +29,24 @@ public class MuscularAssessmentService : IMuscularAssessmentService
 
         _repository.AddMuscularAssessment(newMuscularAssessment);
     }
+
+    public void RemoveMuscularAssessment(MuscularAssessment muscularAssessment)
+    {
+
+        _repository.DeleteMuscularAssessment(muscularAssessment);
+    }
+
+    public void UpdateMuscularAssessment(MuscularAssessment muscularAssessment, int muscularAssessmentId, string muscleAssessment)
+    {
+        var newMuscularAssessment = _repository.GetAllMuscularAssessments(muscularAssessmentId, null, null, null, null).FirstOrDefault();
+        if (newMuscularAssessment != null)
+        {
+            newMuscularAssessment.MuscleAssessment = muscleAssessment;
+            _repository.UpdateMuscularAssessment(newMuscularAssessment);
+        }
+        else
+        {
+            throw new KeyNotFoundException($"Muscular Assessment with ID {muscularAssessmentId} not found.");
+        }
+    }
 }

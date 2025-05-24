@@ -48,4 +48,18 @@ public class MuscularAssessmentRepository : IMuscularAssessmentRepository
         _context.MuscularAssessments.Add(muscularAssessment);
         _context.SaveChanges();
     }
+
+    public void DeleteMuscularAssessment(MuscularAssessment muscularAssessment)
+    {
+
+        _context.MuscularAssessments.Remove(muscularAssessment);
+        _context.SaveChanges();
+        
+    }
+
+    public void UpdateMuscularAssessment(MuscularAssessment muscularAssessment)
+    {
+        _context.MuscularAssessments.Update(muscularAssessment);
+        _context.SaveChanges();
+    }
 }

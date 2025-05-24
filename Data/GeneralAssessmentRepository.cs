@@ -58,15 +58,26 @@ public class GeneralAssessmentRepository : IGeneralAssessmentRepository
         if (!string.IsNullOrEmpty(medicalHistory))
         {
             query = query.Where(p => p.MedicalHistory == medicalHistory);
-        }        
+        }
 
         return query.ToList();
     }
 
-        
     public void AddGeneralAssessment(GeneralAssessment generalAssessment)
     {
         _context.GeneralAssessments.Add(generalAssessment);
+        _context.SaveChanges();
+    }
+
+    public void DeleteGeneralAssessment(GeneralAssessment generalAssessment)
+    {
+        _context.GeneralAssessments.Remove(generalAssessment);
+        _context.SaveChanges();
+    }
+
+    public void UpdateGeneralAssessment(GeneralAssessment generalAssessment)
+    {
+        _context.GeneralAssessments.Update(generalAssessment);
         _context.SaveChanges();
     }
 }
