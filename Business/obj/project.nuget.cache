@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "31Mbyxnjreki8LAtQCh2qnWvqmWD4lVEMJ0k5xjVRBXBJ76wiKxmsr9iTulNOYgwXOZkA0lzcWkAipZcnQvlZA==",
+  "dgSpecHash": "NhA6qLrl+kBcDbrqdljZZxiGcHVFJhumfIFEeWWo11eEmtaDiUfF7VOSySkmEn9ls7Ob/x2MXBsqUtgGBYP3CA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lenovo\\OneDrive\\Escritorio\\pgfAzure\\Business\\FisioScan.Business.csproj",
+  "projectFilePath": "C:\\Users\\Lenovo\\OneDrive\\Escritorio\\ciclo DAW\\Tercer ciclo\\git\\Business\\FisioScan.Business.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
     "C:\\Users\\Lenovo\\.nuget\\packages\\microsoft.data.sqlclient\\2.1.4\\microsoft.data.sqlclient.2.1.4.nupkg.sha512",
