@@ -78,9 +78,9 @@ window.onload = async function() {
         const prefix = `muscle-${index}`;
 
         card.innerHTML = `
-            <label>Músculo:
-                <input type="text" id="${prefix}-muscleName" value="${assessment.muscleName || ""}">
-            </label>
+            <p><strong>Músculo:</strong> 
+                <span id="${prefix}-muscleName">${assessment.muscleName || "Sin nombre"}</span>
+            </p>
             <br>
             <label>Muscle Assessment:
                 <input type="text" id="${prefix}-muscleAssessment" value="${assessment.muscleAssessment || ""}">

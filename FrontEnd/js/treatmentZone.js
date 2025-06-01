@@ -160,6 +160,8 @@ async function createTreatment() {
         console.error("Error al crear el tratamiento:", error);
         alert("Hubo un error al crear el tratamiento. Inténtalo de nuevo.");
     }
+
+    showSection('general-assessment');
 }
 
 
