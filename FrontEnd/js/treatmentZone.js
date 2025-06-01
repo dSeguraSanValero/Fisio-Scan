@@ -110,8 +110,19 @@ async function createTreatment() {
     const patient = JSON.parse(patientData);
     const patientId = patient.patientId;
 
-    const formattedDate = document.getElementById("treatmentDate").value;
-    const treatmentCause = document.getElementById("treatmentCause").value;
+    const formattedDate = document.getElementById("treatmentDate").value.trim();
+    const treatmentCause = document.getElementById("treatmentCause").value.trim();
+
+
+    if (!formattedDate || !treatmentCause) {
+        console.error("Los campos de fecha del tratamiento y causa del tratamiento no pueden estar vacíos.");
+        Swal.fire({
+            title: "Empty Fields",
+            text: "Please fill in all fields.",
+            icon: "warning"
+        });
+        return;
+    }
 
     const treatmentData = {
         patientId: patientId,
@@ -119,15 +130,16 @@ async function createTreatment() {
         treatmentDate: formattedDate,
     };
 
-    fetch('https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment', {
-        method: 'POST',
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(treatmentData)
-    })
-    .then(async response => {
+    try {
+        const response = await fetch('https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment', {
+            method: 'POST',
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(treatmentData)
+        });
+
         const contentType = response.headers.get("Content-Type");
 
         if (!response.ok) {
@@ -144,8 +156,12 @@ async function createTreatment() {
         }
 
         await storageTreatment();
-    });
+    } catch (error) {
+        console.error("Error al crear el tratamiento:", error);
+        alert("Hubo un error al crear el tratamiento. Inténtalo de nuevo.");
+    }
 }
+
 
 
 
@@ -295,9 +311,6 @@ function createMuscleAssessments() {
         window.location.href = "privateZone.html";
     });
 }
-
-
-
 
 
 async function storageTreatment() {
