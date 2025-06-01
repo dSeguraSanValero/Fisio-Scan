@@ -6,4 +6,4 @@ La arquitectura del sistema se basa en un enfoque modular dividido en tres grand
 
 - Repositorio github: https://github.com/dSeguraSanValero/Fisio-Solution
 
-- Acceso al FrontEnd: 
+- Acceso al FrontEnd: https://jolly-forest-005d99b03.6.azurestaticapps.net
