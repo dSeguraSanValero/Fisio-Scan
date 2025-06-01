@@ -24,6 +24,8 @@ window.onload = function() {
     }, 300);
     
     getPhysioName(token);
+
+    document.getElementById("loading-screen").classList.add("hidden");
 };
 
 
@@ -50,7 +52,7 @@ function showSection(sectionClass) {
 
 async function getPhysioName(token) {
     try {
-        const response = await fetch("http://localhost:7238/Physio", {
+        const response = await fetch("https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Physio", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -79,7 +81,7 @@ async function getPhysioName(token) {
             const physioDiv = document.createElement('div');
 
             physioDiv.innerHTML = `
-                <p><strong>¡Bienvenido ${physio.name}!</strong></p>
+                <p><strong>Welcome ${physio.name}!</strong></p>
             `;
 
             container.appendChild(physioDiv);
@@ -119,7 +121,7 @@ async function fetchPatients(text) {
         const secondSurnames = getInputValues(secondSurnameInputs);
         const nifs = getInputValues(nifInputs);
 
-        let url = "http://localhost:7238/Patient";
+        let url = "https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Patient";
 
         let params = [];
 
@@ -161,8 +163,11 @@ async function fetchPatients(text) {
 
 
         if (!response.ok) {
-            console.error("Error al obtener los pacientes. Código de estado: " + response.status);
-            alert("No se encontraron pacientes con esos datos. Intenta de nuevo.");
+            Swal.fire({
+            title: "No patients found",
+            text: "Please, create a new patient",
+            icon: "question"
+            });
             return;
         }        
 
@@ -182,7 +187,7 @@ async function fetchPatients(text) {
                 const thead = document.createElement('thead');
                 thead.innerHTML = `
                     <tr>
-                        <th>#</th>
+                        <th></th>
                         <th>Name</th>
                         <th>First Surname</th>
                         <th>Second Surname</th>
@@ -212,7 +217,21 @@ async function fetchPatients(text) {
         
                     if (text === 'show') {
                         button.addEventListener('click', () => {
-                            alert(`DNI: ${patient.dni}\nFecha de nacimiento: ${patient.birthDate}`);
+                            Swal.fire({
+                                title: `${patient.name}, ${patient.firstSurname}, ${patient.secondSurname}`,
+                                showCancelButton: true,
+                                showDenyButton: true,
+                                confirmButtonText: "Edit patient details",
+                                confirmButtonColor: "#ff911c",
+                                denyButtonText: "Delete patient",
+                                }).then((result) => {
+                                if (result.isConfirmed) {
+                                    sessionStorage.setItem("patientToEdit", JSON.stringify(patient));
+                                    window.location.href = "editPatientDetails.html";
+                                } else if (result.isDenied) {
+                                    deletePatient(patient.patientId);
+                                }
+                            });
                         });
                     }
         
@@ -265,7 +284,7 @@ async function fetchTreatments(patientId) {
         const treatmentCause = getInputValues(treatmentCauseInputs);
         const treatmentDate = getInputValues(treatmentDateInputs);
 
-        let url = "http://localhost:7238/Treatment";
+        let url = "https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment";
 
         let params = [];
 
@@ -300,9 +319,15 @@ async function fetchTreatments(patientId) {
 
         if (!response.ok) {
             console.error("Error al obtener los tratamientos. Código de estado: " + response.status);
-            alert("No se encontraron tratamientos con esos datos. Intenta de nuevo.");
-            return;
-        }        
+            Swal.fire({
+                title: "No treatments found",
+                text: "Please, create a new treatment, or enter a different search criteria",
+                icon: "question"
+            }).then(() => {
+                window.location.href = "privateZone.html";
+            });
+        }
+
 
         const data = await response.json();
 
@@ -320,10 +345,11 @@ async function fetchTreatments(patientId) {
                 const thead = document.createElement('thead');
                 thead.innerHTML = `
                     <tr>
-                        <th>#</th>
+                        <th></th>
                         <th>Treatment Cause</th>
                         <th>Treatment Date</th>
-                        <th>Select</th>
+                        <th>Display</th>
+                        <th>Edit/Delete</th>
                     </tr>
                 `;
                 table.appendChild(thead);
@@ -337,15 +363,33 @@ async function fetchTreatments(patientId) {
                         <td>${index + 1}</td>
                         <td>${treatment.treatmentCause}</td>
                         <td>${treatment.treatmentDate}</td>
-                        <td><button class="btn btn-success action-button">Select</button></td>
+                        <td><button class="btn btn-success display-button">Select</button></td>
+                        <td><button class="btn btn-warning edit-button">Select</button></td>
                     `;
 
-                    const button = row.querySelector('.action-button');
-
-                    button.addEventListener('click', () => {
-                        displayTreatment(treatment.treatmentId)
+                    const displayButton = row.querySelector('.display-button');
+                    displayButton.addEventListener('click', () => {
+                        storageTreatment(treatment.treatmentId);
                     });
-        
+
+                    const editButton = row.querySelector('.edit-button');
+                    editButton.addEventListener('click', () => {
+                        Swal.fire({
+                            title: `${treatment.treatmentCause}, ${treatment.treatmentDate}`,
+                            showCancelButton: true,
+                            showDenyButton: true,
+                            confirmButtonText: "Edit treatment",
+                            confirmButtonColor: "#ff911c",
+                            denyButtonText: "Delete treatment"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    editTreatment(treatment.treatmentId);
+                                    
+                                } else if (result.isDenied) {
+                                    deleteTreatment(treatment.treatmentId);
+                                }
+                            });
+                    });
                     tbody.appendChild(row);
                 });
         
@@ -371,7 +415,7 @@ async function addTreatment(dni) {
             return;
         }
 
-        const url = `http://localhost:7238/Patient?dni=${encodeURIComponent(dni)}`;
+        const url = `https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Patient?dni=${encodeURIComponent(dni)}`;
         const response = await fetch(url, {
             method: "GET",
             headers: {
@@ -381,8 +425,12 @@ async function addTreatment(dni) {
         });
 
         if (!response.ok) {
-            console.error("Error al obtener los datos del paciente. Código de estado: " + response.status);
-            alert("No se pudo obtener los datos del paciente. Intenta de nuevo.");
+            Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            footer: '<a href="#">Why do I have this issue?</a>'
+            });
             return;
         }
 
@@ -393,8 +441,11 @@ async function addTreatment(dni) {
             sessionStorage.setItem("patientData", JSON.stringify(patientData[0]));
         } else {
 
-            console.error("No se recibieron datos del paciente.");
-            alert("No se encontraron datos para el paciente con el DNI proporcionado.");
+            Swal.fire({
+            title: "No patient found",
+            text: "No patient found with the provided NIF",
+            icon: "question"
+            });
             return;
         }
 
@@ -416,7 +467,7 @@ async function searchTreatment(patientId) {
             return;
         }
 
-        const url = `http://localhost:7238/Patient?patientId=${encodeURIComponent(patientId)}`;
+        const url = `https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Patient?patientId=${encodeURIComponent(patientId)}`;
         const response = await fetch(url, {
             method: "GET",
             headers: {
@@ -426,8 +477,12 @@ async function searchTreatment(patientId) {
         });
 
         if (!response.ok) {
-            console.error("Error al obtener los datos del paciente. Código de estado: " + response.status);
-            alert("No se pudo obtener los datos del paciente. Intenta de nuevo.");
+            Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            footer: '<a href="#">Why do I have this issue?</a>'
+            });
             return;
         }
 
@@ -438,8 +493,11 @@ async function searchTreatment(patientId) {
             sessionStorage.setItem("patientData", JSON.stringify(patientData[0]));
         } else {
 
-            console.error("No se recibieron datos del paciente.");
-            alert("No se encontraron datos para el paciente con el DNI proporcionado.");
+            Swal.fire({
+                title: "No patient found",
+                text: "No patient found with the provided NIF",
+                icon: "question"
+            });
             return;
         }
 
@@ -453,7 +511,7 @@ async function searchTreatment(patientId) {
 }
 
 
-async function displayTreatment(treatmentId) {
+async function storageTreatment(treatmentId) {
     try {
 
         const token = sessionStorage.getItem("jwtToken");
@@ -465,7 +523,7 @@ async function displayTreatment(treatmentId) {
         }
 
     
-        const url = `http://localhost:7238/Treatment?treatmentId=${encodeURIComponent(treatmentId)}`;
+        const url = `https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment?treatmentId=${encodeURIComponent(treatmentId)}`;
         const response = await fetch(url, {
             method: "GET",
             headers: {
@@ -478,54 +536,304 @@ async function displayTreatment(treatmentId) {
 
         sessionStorage.setItem("thisTreatment", JSON.stringify(treatmentData[0]));
 
-        window.location.href = "displayTreatment.html";
-
     } catch (error) {
-        console.error("Error en la función displayTreatment:", error);
+        console.error("Error en la función storageTreatment:", error);
     }   
+
+    window.location.href = "displayTreatment.html";
 }
 
 
-async function sendForm() {
+async function editTreatment(treatmentId) {
+    try {
 
+        const token = sessionStorage.getItem("jwtToken");
+
+        if (!token) {
+            console.error("Token no encontrado. Redirigiendo a la página de login.");
+            window.location.href = "index.html";
+            return;
+        }
+
+    
+        const url = `https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment?treatmentId=${encodeURIComponent(treatmentId)}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const treatmentData = await response.json();
+
+        sessionStorage.setItem("thisTreatment", JSON.stringify(treatmentData[0]));
+
+    } catch (error) {
+        console.error("Error en la función storageTreatment:", error);
+    }   
+
+    window.location.href = "editTreatment.html";
+}
+
+
+async function deletePatient(patientId) {
     const token = sessionStorage.getItem("jwtToken");
-        
+
     if (!token) {
         console.error("Token no encontrado. Redirigiendo a la página de login.");
         window.location.href = "index.html";
         return;
     }
-    
+
+    const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+    };
+
+    try {
+        const treatmentsResponse = await fetch(
+            `https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment?patientId=${patientId}`,
+            {
+                method: "GET",
+                headers
+            }
+        );
+
+        let treatments = [];
+
+        if (treatmentsResponse.ok && treatmentsResponse.headers.get("content-type")?.includes("application/json")) {
+            treatments = await treatmentsResponse.json();
+        } else {
+            console.warn("No se encontraron tratamientos o la respuesta no es JSON. Continuando con la eliminación.");
+        }
+
+        for (const treatment of treatments) {
+            try {
+                await silentDeleteTreatment(treatment.treatmentId);
+            } catch (error) {
+                console.error(`Error al eliminar el tratamiento con ID ${treatment.treatmentId}:`, error);
+            }
+        }
+
+        const response = await fetch(
+            `https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Patient/${patientId}`,
+            {
+                method: "DELETE",
+                headers
+            }
+        );
+
+        if (!response.ok) {
+            console.error("No se pudo eliminar el paciente:", response.status);
+            Swal.fire({
+                icon: "error",
+                title: "No se pudo eliminar el paciente",
+                text: "Verifica si todos los tratamientos fueron eliminados."
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: "Patient deleted successfully",
+            icon: "success"
+        });
+        window.location.href = "privateZone.html";
+
+    } catch (error) {
+        console.error("Error en la función deletePatient:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: "No se pudo completar la eliminación del paciente."
+        });
+    }
+}
+
+
+async function sendForm() {
+    const token = sessionStorage.getItem("jwtToken");
+
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+
     const name = document.querySelector('input[placeholder="Form Name"]').value;
     const firstSurname = document.querySelector('input[placeholder="Form First Surname"]').value;
     const secondSurname = document.querySelector('input[placeholder="Form Second Surname"]').value;
     const nif = document.querySelector('input[placeholder="Form NIF"]').value;
-    const birthDate = document.querySelector('input[placeholder="Form Birth Date"]').value;
+    const birthDate = document.getElementById("birthDate").value;
+
+    const nifRegex = /^\d{8}$/;
+    if (!nifRegex.test(nif)) {
+        Swal.fire({
+            icon: "warning",
+            title: "Invalid NIF",
+            text: "The NIF must contain exactly 8 numeric digits."
+        });
+        return;
+    }
 
     const patientData = {
         name: name,
         firstSurname: firstSurname,
         secondSurname: secondSurname,
         dni: nif,
-        birthDate: new Date(birthDate).toISOString(),
+        birthDate: birthDate,
     };
 
-    fetch('http://localhost:7238/Patient', {
+    fetch('https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Patient', {
         method: 'POST',
         headers: {
-        "Authorization": `Bearer ${token}`,
-        'Content-Type': 'application/json'
+            "Authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(patientData)
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Respuesta del servidor:', data);
-        alert("Paciente creado correctamente.");
+        Swal.fire({
+            title: "Patient created successfully",
+            icon: "success"
+        });
     })
     .catch(error => {
-        console.error('Error al enviar los datos:', error);
-        alert("ERROR al crear el paciente!!");
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            footer: '<a href="#">Why do I have this issue?</a>'
+        });
+    });
+}
+
+
+
+async function deleteTreatment(treatmentId) {
+    const token = sessionStorage.getItem("jwtToken");
+
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+    };
+
+    try {
+
+        const muscularResponse = await fetch(`https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/MuscularAssessment?treatmentId=${encodeURIComponent(treatmentId)}`, {
+            method: "DELETE",
+            headers
+        });
+
+
+        const generalResponse = await fetch(`https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/GeneralAssessment?treatmentId=${encodeURIComponent(treatmentId)}`, {
+            method: "DELETE",
+            headers
+        });
+
+
+        const treatmentResponse = await fetch(`https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment/${treatmentId}`, {
+            method: "DELETE",
+            headers
+        });
+
+        if (!treatmentResponse.ok) {
+            console.error("Error al eliminar el tratamiento:", treatmentResponse.status);
+            alert("No se pudo eliminar el tratamiento.");
+            return;
+        }
+
+
+        Swal.fire({
+            icon: "success",
+            title: "Treatment deleted successfully"
+        });
+
+
+        window.location.href = "privateZone.html";
+
+    } catch (error) {
+        console.error("Error en la función deleteTreatment:", error);
+        alert("Ocurrió un error inesperado al eliminar el tratamiento.");
+    }
+}
+
+
+async function silentDeleteTreatment(treatmentId) {
+    const token = sessionStorage.getItem("jwtToken");
+
+    if (!token) {
+        console.error("Token no encontrado. Redirigiendo a la página de login.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+    };
+
+    try {
+        const muscularResponse = await fetch(`https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/MuscularAssessment?treatmentId=${encodeURIComponent(treatmentId)}`, {
+            method: "DELETE",
+            headers
+        });
+
+        if (!muscularResponse.ok) {
+            console.error("Error al eliminar evaluaciones musculares:", muscularResponse.status);
+            return;
+        }
+
+        const generalResponse = await fetch(`https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/GeneralAssessment?treatmentId=${encodeURIComponent(treatmentId)}`, {
+            method: "DELETE",
+            headers
+        });
+
+        if (!generalResponse.ok) {
+            console.error("Error al eliminar la evaluación general:", generalResponse.status);
+            return;
+        }
+
+        const treatmentResponse = await fetch(`https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment/${treatmentId}`, {
+            method: "DELETE",
+            headers
+        });
+
+        if (!treatmentResponse.ok) {
+            console.error("Error al eliminar el tratamiento:", treatmentResponse.status);
+            return;
+        }
+
+    } catch (error) {
+        console.error("Error en silentDeleteTreatment:", error);
+    }
+}
+
+
+
+
+function popUserOptions() {
+    Swal.fire({
+        position: "top-end",
+        title: "User Options",
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: "Edit Profile",
+        confirmButtonColor: "#ff911c",
+        denyButtonText: "Log Off"
+        }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "editPhysioDetails.html";
+        } else if (result.isDenied) {
+            logOff();
+        }
     });
 }
 
@@ -539,3 +847,36 @@ function logOff() {
 
     return;
 }
+
+$(document).ready(function () {
+  $('#birthDate').datepicker({
+    format: 'mm-dd-yyyy',
+    autoclose: true,
+    todayHighlight: true
+  });
+});
+
+
+function limpiarInputs() {
+  const inputs = document.querySelectorAll('input');
+  const textareas = document.querySelectorAll('textarea');
+  const selects = document.querySelectorAll('select');
+
+  inputs.forEach(input => {
+    if (input.type !== 'button' && input.type !== 'submit' && input.type !== 'reset') {
+      input.value = '';
+      if (input.type === 'checkbox' || input.type === 'radio') {
+        input.checked = false;
+      }
+    }
+  });
+
+  textareas.forEach(textarea => {
+    textarea.value = '';
+  });
+
+  selects.forEach(select => {
+    select.selectedIndex = 0;
+  });
+}
+

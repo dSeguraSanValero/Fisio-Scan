@@ -36,7 +36,7 @@ builder.Services.AddScoped<IMuscularAssessmentService, MuscularAssessmentService
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
-var connectionString = builder.Configuration.GetConnectionString("ServerDB_localhost");
+var connectionString = builder.Configuration.GetConnectionString("ServerDB_azure");
 
 builder.Services.AddDbContext<FisioScanContext>(options =>
     options.UseSqlServer(connectionString)
@@ -90,18 +90,38 @@ builder.Services.AddCors(options =>
 options.AddPolicy("MyAllowedOrigins",
     policy =>
     {
-        policy.WithOrigins("http://localhost:8080")
+        policy.WithOrigins("https://zealous-smoke-0cb68de03.6.azurestaticapps.net")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
 var app = builder.Build();
 
+
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<FisioScanContext>();
+        context.Database.Migrate();
+    }
+}
+catch (Exception ex)
+{
+    // Loguear error
+    Console.WriteLine("Error applying migrations: " + ex.Message);
+}
+
+
 app.UseCors("MyAllowedOrigins");
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

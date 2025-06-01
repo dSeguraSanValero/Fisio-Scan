@@ -43,7 +43,7 @@ async function registerPhysio() {
   };
 
   try {
-      const response = await fetch('http://localhost:7238/Physio', {
+      const response = await fetch('https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Physio', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -52,15 +52,26 @@ async function registerPhysio() {
       });
 
       if (response.ok) {
-          alert('Registro exitoso');
+          Swal.fire({
+                title: "Your registration was successful",
+                icon: "success"
+          });
           document.getElementById('registerPhysioForm').reset();
       } else {
           const errorData = await response.json();
-          alert(`Error en el registro: ${errorData.message || response.statusText}`);
+          Swal.fire({
+              title: "Incorrect email format",
+              text: "please, complete all the fields, or check the email format and try again.",
+              icon: "error"
+          });
       }
   } catch (error) {
       console.error('Error al enviar los datos:', error);
-      alert('Error al registrar el fisioterapeuta. Por favor, intenta de nuevo.');
+        Swal.fire({
+            title: "Incorrect email format",
+            text: "please, complete all the fields, or check the email format and try again.",
+            icon: "error"
+        });
   }
 }
 
@@ -84,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function loginPhysio(email, password) {
     try {
-        const response = await fetch("http://localhost:7238/Auth/login-fisioterapeuta", {
+        const response = await fetch("https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Auth/login-fisioterapeuta", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -121,6 +132,13 @@ async function loginPhysio(email, password) {
     } catch (error) {
         console.error("Error durante el login:", error);
     }
+}
+
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById("password");
+    const type = passwordInput.getAttribute("type");
+
+    passwordInput.setAttribute("type", type === "password" ? "text" : "password");
 }
   
 

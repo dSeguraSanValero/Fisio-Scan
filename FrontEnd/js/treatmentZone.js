@@ -22,6 +22,8 @@ window.onload = function() {
 
     showSection('date-card');
 
+    document.getElementById("loading-screen").classList.add("hidden");
+
 };
 
 const slider = document.getElementById('slider');
@@ -53,7 +55,7 @@ function showSection(sectionClass) {
 
 async function getPhysioName(token) {
     try {
-        const response = await fetch("http://localhost:7238/Physio", {
+        const response = await fetch("https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Physio", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -94,10 +96,10 @@ async function getPhysioName(token) {
     }
 }
 
-async function createTreatment() {
 
+async function createTreatment() {
     const token = sessionStorage.getItem("jwtToken");
-        
+
     if (!token) {
         console.error("Token no encontrado. Redirigiendo a la página de login.");
         window.location.href = "index.html";
@@ -105,20 +107,19 @@ async function createTreatment() {
     }
 
     const patientData = sessionStorage.getItem("patientData");
-
     const patient = JSON.parse(patientData);
-    
     const patientId = patient.patientId;
-    const treatmentDate = document.querySelector('input[placeholder="Treatment Date"]').value;
-    const treatmentCause = document.querySelector('input[placeholder="Treatment Cause"]').value;
+
+    const formattedDate = document.getElementById("treatmentDate").value;
+    const treatmentCause = document.getElementById("treatmentCause").value;
 
     const treatmentData = {
         patientId: patientId,
         treatmentCause: treatmentCause,
-        treatmentDate: new Date(treatmentDate).toISOString(),
+        treatmentDate: formattedDate,
     };
 
-    fetch('http://localhost:7238/Treatment', {
+    fetch('https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/Treatment', {
         method: 'POST',
         headers: {
             "Authorization": `Bearer ${token}`,
@@ -143,10 +144,10 @@ async function createTreatment() {
         }
 
         await storageTreatment();
-
-    })
-
+    });
 }
+
+
 
 function createGeneralAssessment() {
 
@@ -188,7 +189,7 @@ function createGeneralAssessment() {
         medicalHistory: generalAssessmentMedicalHistory,
     }
 
-    fetch('http://localhost:7238/GeneralAssessment', {
+    fetch('https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/GeneralAssessment', {
     method: 'POST',
     headers: {
         "Authorization": `Bearer ${token}`,
@@ -234,8 +235,9 @@ function createMuscleAssessments() {
     const treatment = JSON.parse(treatmentData);
     const thisTreatmentId = treatment[0].treatmentId;
 
-    // Seleccionamos todos los bloques de músculos
     const muscleBlocks = document.querySelectorAll('.inputs-container .text-input');
+
+    const fetchPromises = [];
 
     muscleBlocks.forEach(block => {
         const input = block.querySelector('input');
@@ -253,7 +255,7 @@ function createMuscleAssessments() {
 
             console.log(`Enviando datos para ${muscleName}:`, muscleData);
 
-            fetch('http://localhost:7238/MuscularAssessment', {
+            const fetchPromise = fetch('https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net/MuscularAssessment', {
                 method: 'POST',
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -280,19 +282,25 @@ function createMuscleAssessments() {
             .catch(error => {
                 console.error(`Error al enviar datos para ${muscleName}:`, error);
             });
+
+            fetchPromises.push(fetchPromise);
         }
     });
 
-    alert("Tratamiento creado correctamente");
-
-    window.location.href = "privateZone.html";
+    Promise.all(fetchPromises).then(() => {
+        Swal.fire({
+            title: "Treatment created successfully",
+            icon: "success"
+        });
+        window.location.href = "privateZone.html";
+    });
 }
 
 
 
 
-async function storageTreatment() {
 
+async function storageTreatment() {
     const token = sessionStorage.getItem("jwtToken");
 
     if (!token) {
@@ -301,11 +309,19 @@ async function storageTreatment() {
         return;
     }
 
-    const treatmentDate = document.querySelector('input[placeholder="Treatment Date"]').value;
-    const treatmentCause = document.querySelector('input[placeholder="Treatment Cause"]').value;
+    const dateInput = document.getElementById("treatmentDate");
+    const causeInput = document.getElementById("treatmentCause");
 
-    const url = `http://localhost:7238/Treatment?treatmentCause=${encodeURIComponent(treatmentCause)}&treatmentDate=${encodeURIComponent(treatmentDate)}`;
+    if (!dateInput || !causeInput) {
+        console.error("Elementos de fecha o causa no encontrados en el DOM.");
+        return;
+    }
 
+    const rawDate = dateInput.value;
+    const treatmentDate = formatDateToMMDDYYYY(rawDate);
+    const treatmentCause = causeInput.value;
+
+    const url = `https://fisioscan-e6f8ehddembuhch9.westeurope-01.azurewebsites.net//Treatment?treatmentCause=${encodeURIComponent(treatmentCause)}&treatmentDate=${encodeURIComponent(treatmentDate)}`;
 
     await fetch(url, {
         method: "GET",
@@ -325,12 +341,10 @@ async function storageTreatment() {
         if (contentType && contentType.includes("application/json")) {
             const data = await response.json();
             console.log('Respuesta del servidor:', data);
-
             sessionStorage.setItem("treatmentResponse", JSON.stringify(data));
         } else {
             const text = await response.text();
             console.log('Respuesta sin JSON:', text);
-
             sessionStorage.setItem("treatmentResponseText", text);
         }
     })
@@ -339,17 +353,21 @@ async function storageTreatment() {
     });
 }
 
+
+
 function showMuscle(muscleId) {
     document.querySelectorAll(`.${muscleId}`).forEach(section => {
         section.classList.add('active');
     });
 }
 
+
 function hideMuscle(muscleId) {
     document.querySelectorAll(`.${muscleId}`).forEach(section => {
         section.classList.remove('active');
     });
 }
+
 
 document.getElementById('rotateImage').addEventListener('click', function() {
     var img = document.getElementById('muscle-map');
@@ -406,4 +424,34 @@ document.getElementById('rotateImage').addEventListener('click', function() {
         `;
     }
 });
+
+
+function formatDateToMMDDYYYY(dateString) {
+    const date = new Date(dateString);
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${mm}-${dd}-${yyyy}`;
+}
+
+
+function updateFormattedDate() {
+    const rawDate = document.getElementById("treatmentDate").value;
+    const preview = document.getElementById("formattedDatePreview");
+    if (rawDate) {
+        preview.textContent = formatDateToMMDDYYYY(rawDate);
+    } else {
+        preview.textContent = "None";
+    }
+}
+
+
+$(document).ready(function () {
+  $('#treatmentDate').datepicker({
+    format: 'mm-dd-yyyy',
+    autoclose: true,
+    todayHighlight: true
+  });
+});
+
 
